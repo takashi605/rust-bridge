@@ -1,0 +1,1 @@
+# schema-fiarst-graphql-api
