@@ -1,0 +1,15 @@
+services:
+  api-test:
+    build:
+      context: .
+      dockerfile: ./containers/api-test/Dockerfile
+    volumes:
+      - ./application/api_test:/app/api_test:cached
+    networks:
+      - api-network
+    profiles:
+      - test
+
+networks:
+  api-network:
+    driver: bridge

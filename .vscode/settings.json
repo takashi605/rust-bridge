@@ -1,0 +1,10 @@
+{
+  "rust-analyzer.linkedProjects": [
+    "application/api_test/Cargo.toml"
+  ],
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    "editor.formatOnSave": true,
+    "editor.inlayHints.enabled": "off"
+  },
+}
