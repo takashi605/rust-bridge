@@ -1,3 +1,5 @@
 mod learning {
-    mod graphql_api_test;
+    mod gql_api_tests {
+        mod simple;
+    }
 }
