@@ -1,7 +1,8 @@
 // https://countries.trevorblades.com に対して GraphQL クエリを送信するテスト
+// ライブラリや複雑な構造体を使わずに、シンプルな構造でテストを行う
 
 #[tokio::test]
-async fn test_graphql_query_countries_name() {
+async fn simple_test_graphql_query_countries_name() {
     let client = reqwest::Client::new();
 
     let gql_query = r#"
