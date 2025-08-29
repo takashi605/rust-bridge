@@ -20,7 +20,6 @@ async fn test_graphql_query_countries_name() {
         resp_json.data.countries[0].name, "Andorra",
         "最初の国の名前が期待と異なります"
     );
-    eprintln!("最初の国の名前: {}", resp_json.data.countries[0].name);
 }
 
 // レスポンスの構造体定義
