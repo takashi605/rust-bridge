@@ -84,8 +84,7 @@ mod response {
 
         #[test]
         fn test_create_request_builder() {
-            let mut gql_client = GraphQLClient::new();
-            gql_client = gql_client
+            let gql_client = GraphQLClient::new()
                 .target("https://countries.trevorblades.com")
                 .query("query { countries { name } }");
 
