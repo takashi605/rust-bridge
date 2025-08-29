@@ -4,6 +4,9 @@ Rust を用いて、GraphQL API を作成します。これは API テスト駆�
 
 重要：ClaudeCodeAIAgent は、プロジェクトの基盤のみを作成してください。学習用リポジトリのため、基本的なコードは私が書いていきます。
 
+## ClaudeCodeAIAgent への指示
+- やり取りは日本語で行ってください。
+
 ## プロジェクト要件
 1. GraphQL のリクエスト送信方法を学ぶため、学習用テスト(Learning Test)を書く。具体的には、[https://countries.trevorblades.com](https://countries.trevorblades.com/) に対する api テストを書く
 2. 実行環境はコンテナ。API コンテナと API テストコンテナ、及びDBコンテナの3種類を用意する。
@@ -131,3 +134,19 @@ ix() -> impl Responder {
 - DB には postgresql を採用
 - データはボリュームマウントで保持する
 - テスト毎のデータクリーンアップに備え、マイグレーション機構を備える
+
+## Makefile コマンド
+プロジェクトルートで以下のコマンドを実行してください。
+
+### `make build`
+- Docker Compose のコンテナをビルドします
+
+### `make test`
+- API テストを実行します
+- test profile を指定して api-test コンテナを起動し、テストを実行
+- `--abort-on-container-exit` オプションにより、テスト終了後に新規起動したコンテナを自動停止します
+- 既に起動していたコンテナには影響しません
+
+### `make down`
+- すべてのコンテナを停止し、ボリュームも含めて削除します
+- `-v` オプションにより、データボリュームもクリーンアップされます

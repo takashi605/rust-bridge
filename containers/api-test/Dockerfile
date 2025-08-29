@@ -7,9 +7,13 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY application/api_test /app/api_test
+RUN useradd -m -u 1000 -s /bin/bash testuser
+
+COPY --chown=testuser:testuser application/api_test /app/api_test
 
 WORKDIR /app/api_test
+
+USER testuser
 
 RUN cargo build --tests
 
