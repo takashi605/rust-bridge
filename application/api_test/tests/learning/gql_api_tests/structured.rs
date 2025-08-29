@@ -3,7 +3,7 @@
 
 #[tokio::test]
 async fn test_graphql_query_countries_name() {
-    let gql_client = response::GraphQLClient::new()
+    let gql_client = response::MyGraphQLClient::new()
         .target("https://countries.trevorblades.com")
         .query("query { countries { name } }");
 
@@ -24,12 +24,12 @@ async fn test_graphql_query_countries_name() {
 
 // レスポンスの構造体定義
 mod response {
-    pub struct GraphQLClient {
+    pub struct MyGraphQLClient {
         reqwest_client: reqwest::Client,
         target: String,
         query: String,
     }
-    impl GraphQLClient {
+    impl MyGraphQLClient {
         pub fn new() -> Self {
             Self {
                 reqwest_client: reqwest::Client::new(),
@@ -84,7 +84,7 @@ mod response {
 
         #[test]
         fn test_create_request_builder() {
-            let gql_client = GraphQLClient::new()
+            let gql_client = MyGraphQLClient::new()
                 .target("https://countries.trevorblades.com")
                 .query("query { countries { name } }");
 
