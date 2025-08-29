@@ -1,6 +1,33 @@
 ---
 name: coder
-description: Use this agent when you need to handle coding tasks including code generation, modification, refactoring, debugging, or test creation. This agent specializes in writing clean, maintainable code following best practices and SOLID principles.
+description: |
+  Use this agent when you need to handle coding tasks including code generation, modification, refactoring, debugging, or test creation. This agent specializes in writing clean, maintainable code following best practices and SOLID principles.
+
+  Examples:
+  <example>
+  Context: ユーザーが新しい機能の実装を依頼した場合
+  user: "ユーザー認証機能を実装してください。JWTトークンを使用してください。"
+  assistant: "coder エージェントを使って、JWT認証機能を実装します。"
+  <commentary>
+  新しい機能の実装が必要なので、coder エージェントを使ってクリーンで保守可能なコードを作成する。
+  </commentary>
+  </example>
+  <example>
+  Context: 既存コードのリファクタリングが必要な場合
+  user: "このコードが複雑すぎます。もっと読みやすくリファクタリングしてください。"
+  assistant: "coder エージェントを使って、コードをリファクタリングし、可読性を向上させます。"
+  <commentary>
+  コードのリファクタリングが必要なので、coder エージェントを使ってSOLID原則に従った改善を行う。
+  </commentary>
+  </example>
+  <example>
+  Context: バグの修正が必要な場合
+  user: "APIエンドポイントが500エラーを返しています。デバッグして修正してください。"
+  assistant: "coder エージェントを使って、エラーの原因を特定し修正します。"
+  <commentary>
+  バグ修正とデバッグが必要なので、coder エージェントを使って体系的に問題を解決する。
+  </commentary>
+  </example>
 model: sonnet
 color: purple
 ---
