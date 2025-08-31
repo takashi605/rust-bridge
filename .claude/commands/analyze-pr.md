@@ -1,6 +1,4 @@
-以下が修正されたプロンプトです：
-
-# Claude Code Custom Slash Command: `/analyze-pr`
+# Claude Command: Analyze PR
 
 ## Command Overview
 Analyzes the diff of a specific PR in the current GitHub repository and provides a structured analysis of the changes. This command focuses purely on diff analysis without providing code improvement suggestions.
