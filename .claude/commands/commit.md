@@ -1,117 +1,117 @@
 # Claude Command: Commit
 
-このコマンドは、コンベンショナルコミットメッセージと絵文字を使用した、整形式のコミットを作成するのに役立ちます。
+This command helps create well-formatted commits using conventional commit messages and emojis.
 
-## 使用方法
+## Usage
 
-コミットを作成するには、以下を入力するだけです：
+To create a commit, simply enter:
 
 ```
 /commit
 ```
 
-## このコマンドの機能
-1. `git status`でステージングされたファイルをチェック
-2. ステージングされたファイルが 0 の場合、`git add`で変更されたファイルと新しいファイルをすべて自動的に追加
-3. `git diff`を実行して、コミットされる変更内容を理解
-4. diff を分析して、複数の異なる論理的な変更が存在するかを判断
-5. 複数の異なる変更が検出された場合、コミットを複数の小さなコミットに分割することを提案
-6. 各コミット（または分割しない場合は単一のコミット）に対して、絵文字付きコンベンショナルコミット形式でコミットメッセージを作成
-7. `git branch --contains`を実行して現在のブランチの Issue 番号を理解。コミットメッセージに Issue 番号を含める(例： ✨ feat: ブログ記事一覧画面からブログ記事編集画面へのリンクを追加 #3)
+## Command Features
+1. Check staged files with `git status`
+2. If there are 0 staged files, automatically add all changed and new files with `git add`
+3. Run `git diff` to understand the changes being committed
+4. Analyze diff to determine if multiple distinct logical changes exist
+5. If multiple distinct changes are detected, suggest splitting the commit into multiple smaller commits
+6. For each commit (or single commit if not splitting), create commit message in conventional commit format with emoji
+7. Run `git branch --contains` to understand the current branch's Issue number. Include Issue number in commit message (example: ✨ feat: ブログ記事一覧画面からブログ記事編集画面へのリンクを追加 #3)
 
-## コミットのベストプラクティス
-- **コミット前の検証**：コードがリントされ、正しくビルドされ、ドキュメントが更新されていることを確認
-- **原子的なコミット**：各コミットは単一の目的を果たす関連する変更を含むべき
-- **大きな変更の分割**：変更が複数の関心事に及ぶ場合は、別々のコミットに分割
-- **コンベンショナルコミット形式**：`<type>: <description>`の形式を使用。type は以下のいずれか：
-  - feat: 新機能
-  - fix: バグ修正
-  - docs: ドキュメントの変更
-  - style: コードスタイルの変更（フォーマットなど）
-  - refactor: バグ修正も機能追加もないコード変更
-  - perf: パフォーマンスの改善
-  - test: テストの追加または修正
-  - chore: ビルドプロセス、ツールなどの変更
-- **現在形、命令法**：コミットメッセージは命令として書く（例：「add feature」で「added feature」ではない）
-- **簡潔な最初の行**：最初の行は 72 文字以内に収める
-- **絵文字**：各コミットタイプは適切な絵文字とペアになっています：
-  - ✨ feat: 新機能
-  - 🐛 fix: バグ修正
-  - 📝 docs: ドキュメント
-  - 💄 style: フォーマット/スタイル
-  - ♻️ refactor: コードリファクタリング
-  - ⚡️ perf: パフォーマンス改善
-  - ✅ test: テスト
-  - 🔧 chore: ツール、設定
-  - 🚀 ci: CI/CD の改善
-  - 🗑️ revert: 変更の取り消し
-  - 🧪 test: 失敗するテストの追加
-  - 🚨 fix: コンパイラ/リンター警告の修正
-  - 🔒️ fix: セキュリティ問題の修正
-  - 👥 chore: コントリビューターの追加または更新
-  - 🚚 refactor: リソースの移動または名前変更
-  - 🏗️ refactor: アーキテクチャの変更
-  - 🔀 chore: ブランチのマージ
-  - 📦️ chore: コンパイル済みファイルまたはパッケージの追加または更新
-  - ➕ chore: 依存関係の追加
-  - ➖ chore: 依存関係の削除
-  - 🌱 chore: シードファイルの追加または更新
-  - 🧑‍💻 chore: 開発者体験の改善
-  - 🧵 feat: マルチスレッドまたは並行処理に関連するコードの追加または更新
-  - 🔍️ feat: SEO の改善
-  - 🏷️ feat: 型の追加または更新
-  - 💬 feat: テキストとリテラルの追加または更新
-  - 🌐 feat: 国際化とローカライゼーション
-  - 👔 feat: ビジネスロジックの追加または更新
-  - 📱 feat: レスポンシブデザインの作業
-  - 🚸 feat: ユーザーエクスペリエンス/使いやすさの改善
-  - 🩹 fix: 重要でない問題の簡単な修正
-  - 🥅 fix: エラーのキャッチ
-  - 👽️ fix: 外部 API の変更によるコードの更新
-  - 🔥 fix: コードまたはファイルの削除
-  - 🎨 style: コードの構造/フォーマットの改善
-  - 🚑️ fix: 重要なホットフィックス
-  - 🎉 chore: プロジェクトの開始
-  - 🔖 chore: リリース/バージョンタグ
-  - 🚧 wip: 作業中
-  - 💚 fix: CI ビルドの修正
-  - 📌 chore: 依存関係を特定のバージョンに固定
-  - 👷 ci: CI ビルドシステムの追加または更新
-  - 📈 feat: 分析またはトラッキングコードの追加または更新
-  - ✏️ fix: タイポの修正
-  - ⏪️ revert: 変更の取り消し
-  - 📄 chore: ライセンスの追加または更新
-  - 💥 feat: 破壊的変更の導入
-  - 🍱 assets: アセットの追加または更新
-  - ♿️ feat: アクセシビリティの改善
-  - 💡 docs: ソースコード内のコメントの追加または更新
-  - 🗃️ db: データベース関連の変更の実行
-  - 🔊 feat: ログの追加または更新
-  - 🔇 fix: ログの削除
-  - 🤡 test: モックの作成
-  - 🥚 feat: イースターエッグの追加または更新
-  - 🙈 chore: .gitignore ファイルの追加または更新
-  - 📸 test: スナップショットの追加または更新
-  - ⚗️ experiment: 実験の実行
-  - 🚩 feat: 機能フラグの追加、更新、または削除
-  - 💫 ui: アニメーションとトランジションの追加または更新
-  - ⚰️ refactor: デッドコードの削除
-  - 🦺 feat: バリデーションに関連するコードの追加または更新
-  - ✈️ feat: オフラインサポートの改善
+## Commit Best Practices
+- **Pre-commit verification**: Ensure code is linted, builds correctly, and documentation is updated
+- **Atomic commits**: Each commit should contain related changes that serve a single purpose
+- **Split large changes**: If changes span multiple concerns, split into separate commits
+- **Conventional commit format**: Use `<type>: <description>` format. Type should be one of:
+  - feat: New features
+  - fix: Bug fixes
+  - docs: Documentation changes
+  - style: Code style changes (formatting, etc.)
+  - refactor: Code changes that neither fix bugs nor add features
+  - perf: Performance improvements
+  - test: Adding or correcting tests
+  - chore: Changes to build process, tools, etc.
+- **Present tense, imperative mood**: Write commit messages as commands (e.g., "add feature" not "added feature")
+- **Concise first line**: Keep the first line under 72 characters
+- **Emojis**: Each commit type is paired with appropriate emojis:
+  - ✨ feat: New features
+  - 🐛 fix: Bug fixes
+  - 📝 docs: Documentation
+  - 💄 style: Formatting/styling
+  - ♻️ refactor: Code refactoring
+  - ⚡️ perf: Performance improvements
+  - ✅ test: Testing
+  - 🔧 chore: Tools, configuration
+  - 🚀 ci: CI/CD improvements
+  - 🗑️ revert: Reverting changes
+  - 🧪 test: Adding failing tests
+  - 🚨 fix: Fixing compiler/linter warnings
+  - 🔒️ fix: Fixing security issues
+  - 👥 chore: Adding or updating contributors
+  - 🚚 refactor: Moving or renaming resources
+  - 🏗️ refactor: Making architectural changes
+  - 🔀 chore: Merging branches
+  - 📦️ chore: Adding or updating compiled files or packages
+  - ➕ chore: Adding dependencies
+  - ➖ chore: Removing dependencies
+  - 🌱 chore: Adding or updating seed files
+  - 🧑‍💻 chore: Improving developer experience
+  - 🧵 feat: Adding or updating code related to multithreading or concurrency
+  - 🔍️ feat: Improving SEO
+  - 🏷️ feat: Adding or updating types
+  - 💬 feat: Adding or updating text and literals
+  - 🌐 feat: Internationalization and localization
+  - 👔 feat: Adding or updating business logic
+  - 📱 feat: Working on responsive design
+  - 🚸 feat: Improving user experience/usability
+  - 🩹 fix: Simple fix for a non-critical issue
+  - 🥅 fix: Catching errors
+  - 👽️ fix: Updating code due to external API changes
+  - 🔥 fix: Removing code or files
+  - 🎨 style: Improving structure/format of the code
+  - 🚑️ fix: Critical hotfix
+  - 🎉 chore: Beginning a project
+  - 🔖 chore: Releasing/version tags
+  - 🚧 wip: Work in progress
+  - 💚 fix: Fixing CI build
+  - 📌 chore: Pinning dependencies to specific versions
+  - 👷 ci: Adding or updating CI build system
+  - 📈 feat: Adding or updating analytics or tracking code
+  - ✏️ fix: Fixing typos
+  - ⏪️ revert: Reverting changes
+  - 📄 chore: Adding or updating license
+  - 💥 feat: Introducing breaking changes
+  - 🍱 assets: Adding or updating assets
+  - ♿️ feat: Improving accessibility
+  - 💡 docs: Adding or updating comments in source code
+  - 🗃️ db: Performing database related changes
+  - 🔊 feat: Adding or updating logs
+  - 🔇 fix: Removing logs
+  - 🤡 test: Creating mocks
+  - 🥚 feat: Adding or updating an easter egg
+  - 🙈 chore: Adding or updating a .gitignore file
+  - 📸 test: Adding or updating snapshots
+  - ⚗️ experiment: Performing experiments
+  - 🚩 feat: Adding, updating, or removing feature flags
+  - 💫 ui: Adding or updating animations and transitions
+  - ⚰️ refactor: Removing dead code
+  - 🦺 feat: Adding or updating code related to validation
+  - ✈️ feat: Improving offline support
 
-## コミット分割のガイドライン
+## Commit Splitting Guidelines
 
-diff を分析する際、以下の基準に基づいてコミットの分割を検討してください：
+When analyzing diff, consider splitting commits based on the following criteria:
 
-1. **異なる関心事**：コードベースの無関係な部分への変更
-2. **異なる種類の変更**：機能、修正、リファクタリングなどの混在
-3. **ファイルパターン**：異なる種類のファイルへの変更（例：ソースコード対ドキュメント）
-4. **論理的なグループ化**：個別に理解またはレビューしやすい変更
-5. **サイズ**：分割した方が明確になる非常に大きな変更
+1. **Different concerns**: Changes to unrelated parts of the codebase
+2. **Different types of changes**: Mixing features, fixes, refactoring, etc.
+3. **File patterns**: Changes to different kinds of files (e.g., source code vs documentation)
+4. **Logical grouping**: Changes that are easier to understand or review separately
+5. **Size**: Very large changes that would be clearer when split
 
-## 例
+## Examples
 
-良いコミットメッセージ：
+Good commit messages (generated in Japanese):
 
 - ✨ feat: ユーザー認証システムを追加
 - 🐛 fix: レンダリング処理のメモリリークを修正
@@ -130,7 +130,7 @@ diff を分析する際、以下の基準に基づいてコミットの分割を
 - 🔒️ fix: パスワード要件を強化
 - ♿️ feat: スクリーンリーダー対応を改善
 
-コミット分割の例：
+Commit splitting examples:
 1. ✨ feat: 新しい solc バージョン用型定義を追加
 2. 📝 docs: 新しい solc バージョンのドキュメント更新
 3. 🔧 chore: package.json の依存関係を更新
@@ -140,14 +140,16 @@ diff を分析する際、以下の基準に基づいてコミットの分割を
 7. ✅ test: 新機能用ユニットテストを追加
 8. 🔒️ fix: 脆弱性のある依存パッケージを更新
 
-## コマンドオプション
+## Command Options
 
-- --no-verify: プリコミットチェック（lint、build、generate:docs）をスキップ
+- --no-verify: Skip pre-commit checks (lint, build, generate:docs)
 
-## 重要な注意事項
-- 特定のファイルが既にステージングされている場合、コマンドはそれらのファイルのみをコミットします
-- ファイルがステージングされていない場合、変更されたファイルと新しいファイルをすべて自動的にステージングします
-- コミットメッセージは、検出された変更に基づいて構築されます
-- コミット前に、コマンドは diff を確認して、複数のコミットがより適切かどうかを識別します
-- 複数のコミットを提案する場合、変更を個別にステージングしてコミットするのを支援します
-- 常にコミットの diff を確認して、メッセージが変更と一致していることを確認します
+## Important Notes
+- If specific files are already staged, the command will commit only those files
+- If no files are staged, it will automatically stage all changed and new files
+- Commit messages are constructed based on detected changes
+- Before committing, the command checks the diff to identify whether multiple commits would be more appropriate
+- When suggesting multiple commits, it will help stage and commit changes individually
+- Always review the commit diff to ensure the message matches the changes
+
+**Note**: All commit messages will be generated in Japanese to match the project's language requirements, while this documentation is provided in English for better international understanding.
