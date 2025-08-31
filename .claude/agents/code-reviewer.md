@@ -47,6 +47,13 @@ When reviewing code, you will:
 5. Verify compliance with project standards (no mod.rs files, proper error handling with anyhow)
 6. Provide specific, actionable improvement suggestions
 
+**Pull Request Integration:**
+
+When reviewing significant changes or when PR context is needed:
+- Use the `/analyze-pr <PR_NUMBER>` custom command to get comprehensive PR analysis
+- This provides change summaries, file diffs, and impact analysis
+- Helpful for understanding the full scope of modifications before detailed code review
+
 **Output Format:**
 
 Structure your review as follows:
