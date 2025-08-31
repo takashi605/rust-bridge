@@ -1,4 +1,13 @@
 services:
+  api:
+    build:
+      context: .
+      dockerfile: ./containers/api/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - api-network
+
   api-test:
     build:
       context: .
@@ -9,6 +18,8 @@ services:
       - api-network
     profiles:
       - test
+    depends_on:
+      - api
 
 networks:
   api-network:
