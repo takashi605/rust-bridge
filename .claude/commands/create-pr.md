@@ -2,6 +2,15 @@
 This guide explains how to create pull requests using GitHub CLI in our project.
 **Important**: All PR titles and descriptions should be written in Japanese.
 
+## Base Branch Inference from Issue Number
+This command accepts an Issue number as an argument and automatically infers the base branch by searching for branches containing that number.
+
+Usage example:
+```bash
+/create-pr 11
+```
+This will search for branches with the `TASK#11_*` format and use it as the base branch.
+
 ## Prerequisites
 1. Install GitHub CLI if you haven't already:
    ```bash
@@ -18,16 +27,25 @@ This guide explains how to create pull requests using GitHub CLI in our project.
    ```
 
 ## Creating a New Pull Request
+
+### With Issue Number (Recommended)
+When you provide an Issue number, the command will automatically find the appropriate base branch:
+```bash
+# The command will search for TASK#11_* branches and use it as base
+/create-pr 11
+```
+
+### Manual Base Branch Specification
 1. First, prepare your PR description following the template in @.github/pull_request_template.md
 2. Use the `gh pr create --draft` command to create a new pull request:
    ```bash
-   # Basic command structure
-   gh pr create --draft --title "✨(scope): 説明的なタイトル" --body "PRの説明" --base main 
+   # Basic command structure with auto-detected base
+   gh pr create --draft --title "✨(scope): 説明的なタイトル" --body "PRの説明" --base DETECTED_BASE_BRANCH
    ```
    For more complex PR descriptions with proper formatting, use the `--body-file` option with the exact PR template structure:
    ```bash
-   # Create PR with proper template structure
-   gh pr create --draft --title "✨(scope): 説明的なタイトル" --body-file .github/pull_request_template.md --base main
+   # Create PR with proper template structure and auto-detected base
+   gh pr create --draft --title "✨(scope): 説明的なタイトル" --body-file .github/pull_request_template.md --base DETECTED_BASE_BRANCH
    ```
 
 ## Best Practices
