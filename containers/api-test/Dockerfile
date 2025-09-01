@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
 RUN useradd -m -u 1000 -s /bin/bash testuser
 
 COPY --chown=testuser:testuser application/api_test /app/api_test
+COPY --chown=testuser:testuser application/schema /app/schema
 
 WORKDIR /app/api_test
 

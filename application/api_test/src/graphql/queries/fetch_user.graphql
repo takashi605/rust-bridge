@@ -1,0 +1,6 @@
+query Users{
+  user(id: "1") {
+    name,
+    email
+  }
+}

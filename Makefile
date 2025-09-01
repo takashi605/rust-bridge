@@ -6,5 +6,8 @@ build:
 test:
 	docker compose --profile test up --build api-test --abort-on-container-exit
 
+up:
+	docker compose up -d
+
 down:
 	docker compose down -v
