@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
 RUN useradd -m -u 1000 -s /bin/bash apiuser
 
 COPY --chown=apiuser:apiuser application/api /app/api
+COPY --chown=apiuser:apiuser application/schema /app/schema
 
 WORKDIR /app/api
 
