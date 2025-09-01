@@ -7,6 +7,10 @@ RUN useradd -m -u 1000 -s /bin/bash dbuser
 RUN mkdir -p /docker-entrypoint-initdb.d
 RUN chown postgres:postgres /docker-entrypoint-initdb.d
 
+# 初期化スクリプトをコピー
+COPY containers/db/init/*.sql /docker-entrypoint-initdb.d/
+RUN chown postgres:postgres /docker-entrypoint-initdb.d/*.sql
+
 # PostgreSQLの設定
 ENV POSTGRES_DB=graphql_api
 ENV POSTGRES_USER=postgres
