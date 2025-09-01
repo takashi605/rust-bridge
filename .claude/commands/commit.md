@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(git status:*), Bash(git add:*), Bash(git diff:*), Bash(git branch:*)
+description: 適切なコミットメッセージとemojisを使用したwell-formattedなコミットを作成します
+---
+
 # Claude Command: Commit
 
 This command helps create well-formatted commits using conventional commit messages and emojis.

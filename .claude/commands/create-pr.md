@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(gh pr list:*), Bash(gh branch:*), Bash(git branch:*), Read
+description: GitHub CLIを使用してIssue番号から自動でベースブランチを推定し、日本語でPRを作成します
+---
+
 # Claude Command: Create PR
 This guide explains how to create pull requests using GitHub CLI in our project.
 **Important**: All PR titles and descriptions should be written in Japanese.

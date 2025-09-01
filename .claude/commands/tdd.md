@@ -1,3 +1,8 @@
+---
+allowed-tools: Read, Write, Grep, Glob, Task
+description: テスト駆動開発(TDD)のRed-Green-Refactorプロセスに従った開発フロー実行を促します。
+---
+
 # Claude Command: TDD
 This outlines the development practices and principles we require you to follow. Don't start
 working on features until asked, this document is intended to get you into the right state

@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(gh pr diff:*), Bash(gh pr view:*), Bash(git diff:*), Bash(git log:*), Grep, Read
+description: GitHub PRの差分を分析し、変更内容の構造化されたレポートを提供します
+---
+
 # Claude Command: Analyze PR
 
 ## Command Overview
@@ -8,11 +13,23 @@ Analyzes the diff of a specific PR in the current GitHub repository and provides
 /analyze-pr <PR_NUMBER>
 ```
 
+When executed without arguments, it displays a list of available PRs:
+```bash
+/analyze-pr
+```
+
 ## Command Behavior
+
+### With PR number argument
 1. Fetches the diff for the specified PR number
 2. Parses file changes and modifications
 3. Categorizes changes by functional units
 4. Generates a structured analysis report
+
+### Without arguments
+1. Uses `gh pr list` to fetch available PRs in the repository
+2. Displays PR titles and numbers
+3. Prompts user to specify which PR number to analyze
 
 ## Output Contents
 - **PR Diff Summary**: Quantitative data about change scope
@@ -126,92 +143,6 @@ This command generates responses in Japanese, optimized for Japanese development
 
 ### 差分
 
-#### components/LatestPosts.tsx (新規作成)
-```diff
-+++ b/components/LatestPosts.tsx
-@@ -0,0 +1,80 @@
-+import React, { useState, useEffect } from 'react';
-+import { useLatestPosts } from '../hooks/useLatestPosts';
-+import { usePagination } from '../hooks/usePagination';
-+import { Card } from './common/Card';
-+import { Button } from './common/Button';
-+import { Pagination } from './common/Pagination';
-+import { useMediaQuery } from '../hooks/useMediaQuery';
-+import { Link } from 'react-router-dom';
-+
-+interface Post {
-+  id: string;
-+  title: string;
-+  excerpt: string;
-+  publishedAt: string;
-+  author: string;
-+  thumbnail?: string;
-+}
-+
-+export const LatestPosts: React.FC = () => {
-+  const isMobile = useMediaQuery('(max-width: 768px)');
-+  const itemsPerPage = isMobile ? 10 : 21;
-+  
-+  const { data, isLoading, error } = useLatestPosts();
-+  const {
-+    currentPage,
-+    totalPages,
-+    paginatedItems,
-+    handlePageChange
-+  } = usePagination(data?.posts || [], itemsPerPage);
-+
-+  if (isLoading) {
-+    return <div className="loading-spinner">読み込み中...</div>;
-+  }
-+
-+  if (error) {
-+    return <div className="error-message">エラーが発生しました</div>;
-+  }
-+
-+  return (
-+    <div className="latest-posts-container">
-+      <h1 className="page-title">新着記事</h1>
-+      
-+      <div className={`posts-grid ${isMobile ? 'mobile' : 'desktop'}`}>
-+        {paginatedItems.map((post: Post) => (
-+          <Link 
-+            key={post.id} 
-+            to={`/posts/${post.id}`}
-+            className="post-link"
-+          >
-+            <Card className="post-card">
-+              {post.thumbnail && (
-+                <img 
-+                  src={post.thumbnail} 
-+                  alt={post.title}
-+                  className="post-thumbnail"
-+                />
-+              )}
-+              <div className="post-content">
-+                <h2 className="post-title">{post.title}</h2>
-+                <p className="post-excerpt">{post.excerpt}</p>
-+                <div className="post-meta">
-+                  <span className="post-author">{post.author}</span>
-+                  <span className="post-date">
-+                    {new Date(post.publishedAt).toLocaleDateString('ja-JP')}
-+                  </span>
-+                </div>
-+              </div>
-+            </Card>
-+          </Link>
-+        ))}
-+      </div>
-+
-+      <Pagination
-+        currentPage={currentPage}
-+        totalPages={totalPages}
-+        onPageChange={handlePageChange}
-+      />
-+    </div>
-+  );
-+};
-```
-
 #### styles/LatestPosts.module.css (新規作成)
 ```diff
 +++ b/styles/LatestPosts.module.css
@@ -228,74 +159,11 @@ This command generates responses in Japanese, optimized for Japanese development
 +  margin-bottom: 2rem;
 +  text-align: center;
 +}
-+
-+.posts-grid {
-+  display: grid;
-+  gap: 1.5rem;
-+  margin-bottom: 3rem;
-+}
-+
-+.posts-grid.desktop {
-+  grid-template-columns: repeat(3, 1fr);
-+}
-+
-+.posts-grid.mobile {
-+  grid-template-columns: repeat(2, 1fr);
-+}
-+
-+@media (max-width: 480px) {
-+  .posts-grid.mobile {
-+    grid-template-columns: 1fr;
-+  }
-+}
-+
-+.post-link {
-+  text-decoration: none;
-+  color: inherit;
-+  transition: transform 0.2s ease;
-+}
-+
-+.post-link:hover {
-+  transform: translateY(-4px);
-+}
-+
-+.post-card {
-+  height: 100%;
-+  display: flex;
-+  flex-direction: column;
-+}
-+
-+.post-thumbnail {
-+  width: 100%;
-+  height: 200px;
-+  object-fit: cover;
-+  border-radius: 8px 8px 0 0;
-+}
 ```
 
 ### 分析結果
 
-#### コンポーネント構造
-- **依存関係**: 3つのカスタムフック（useLatestPosts, usePagination, useMediaQuery）を使用
-- **共通コンポーネント**: Card, Button, Pagination を利用
-- **ルーティング**: react-router-dom の Link コンポーネントで記事詳細へ遷移
-
-#### 実装詳細
-- **レスポンシブ対応**:
-  - デスクトップ: 3列グリッド（21件表示）
-  - タブレット: 2列グリッド（10件表示）
-  - モバイル（480px以下）: 1列表示
-- **状態管理**: ページネーション状態は usePagination フックで管理
-- **エラーハンドリング**: ローディング状態とエラー状態の表示を実装
-
-#### スタイリング
-- CSS Modules を使用（LatestPosts.module.css）
-- グリッドレイアウトでレスポンシブ対応
-- ホバー時のアニメーション効果（translateY）
-
-#### 関連ファイル
-このコンポーネントに関連する他のファイル：
-- hooks/useLatestPosts.ts（データ取得）
-- hooks/usePagination.ts（ページネーション）
-- hooks/useMediaQuery.ts（レスポンシブ判定）
+#### ファイル構成
+- CSS Modulesファイルを新規作成
+- コンテナとタイトルの基本スタイルを定義
 ```
