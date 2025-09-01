@@ -7,6 +7,11 @@ services:
       - "8080:8080"
     networks:
       - api-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   api-test:
     build:
@@ -19,7 +24,8 @@ services:
     profiles:
       - test
     depends_on:
-      - api
+      api:
+        condition: service_healthy
 
   db:
     build:
