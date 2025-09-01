@@ -13,11 +13,23 @@ Analyzes the diff of a specific PR in the current GitHub repository and provides
 /analyze-pr <PR_NUMBER>
 ```
 
+When executed without arguments, it displays a list of available PRs:
+```bash
+/analyze-pr
+```
+
 ## Command Behavior
+
+### With PR number argument
 1. Fetches the diff for the specified PR number
 2. Parses file changes and modifications
 3. Categorizes changes by functional units
 4. Generates a structured analysis report
+
+### Without arguments
+1. Uses `gh pr list` to fetch available PRs in the repository
+2. Displays PR titles and numbers
+3. Prompts user to specify which PR number to analyze
 
 ## Output Contents
 - **PR Diff Summary**: Quantitative data about change scope
