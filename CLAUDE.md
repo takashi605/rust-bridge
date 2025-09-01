@@ -44,13 +44,13 @@ application/
 - .graphql ファイルに SDL を定義し、lib.rs から公開する
 - 主要な依存クレートはなし
 
-### api-クレート
+### api クレート
 - GraphQL API サーバー
 - 主要な依存クレートは以下
   - anyhow
-  - async-graphql
+  - juniper
+  - juniper-from-schema
   - actix-web
-  - async-graphql-actix-web
   - tokio
   - schema(自作クレート)
 
