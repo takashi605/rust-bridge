@@ -1,4 +1,13 @@
 services:
+  api:
+    build:
+      context: .
+      dockerfile: ./containers/api/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - api-network
+
   api-test:
     build:
       context: .
@@ -9,6 +18,26 @@ services:
       - api-network
     profiles:
       - test
+    depends_on:
+      - api
+
+  db:
+    build:
+      context: .
+      dockerfile: ./containers/db/Dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=graphql_api
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - api-network
+
+volumes:
+  postgres-data:
 
 networks:
   api-network:

@@ -107,14 +107,14 @@ This command generates responses in Japanese, optimized for Japanese development
 
 以下の番号を入力すると、該当箇所の具体的な差分を表示します：
 
-1. バックエンド：APIエンドポイント実装 (handler/latest.go)
-2. バックエンド：ユースケース層 (usecase/get_latest.go)
-3. バックエンド：ドメイン層 (entity.go, sort_service.go)
-4. バックエンド：リポジトリ層の変更
-5. フロントエンド：LatestPostsコンポーネント
-6. フロントエンド：カスタムフック実装
-7. フロントエンド：ルーティング設定
-8. テストファイルの差分
+1. バックエンド - 新着記事取得ハンドラー実装 (handler/latest.go)
+2. バックエンド - GetLatestPostsユースケース追加 (usecase/get_latest.go)
+3. バックエンド - LatestPostsエンティティとソートサービス追加 (domain/entity.go, domain/sort_service.go)
+4. バックエンド - 新着記事取得リポジトリ実装 (repository/latest_posts.go)
+5. フロントエンド - LatestPostsコンポーネント実装 (components/LatestPosts.tsx)
+6. フロントエンド - データ取得とページネーションフック追加 (hooks/useLatestPosts.ts, hooks/usePagination.ts)
+7. フロントエンド - 新着記事画面のルート設定追加 (router/index.tsx)
+
 ```
 
 ## Example Response Format For "詳細な差分確認"
@@ -129,7 +129,7 @@ This command generates responses in Japanese, optimized for Japanese development
 #### components/LatestPosts.tsx (新規作成)
 ```diff
 +++ b/components/LatestPosts.tsx
-@@ -0,0 +1,142 @@
+@@ -0,0 +1,80 @@
 +import React, { useState, useEffect } from 'react';
 +import { useLatestPosts } from '../hooks/useLatestPosts';
 +import { usePagination } from '../hooks/usePagination';
@@ -215,7 +215,7 @@ This command generates responses in Japanese, optimized for Japanese development
 #### styles/LatestPosts.module.css (新規作成)
 ```diff
 +++ b/styles/LatestPosts.module.css
-@@ -0,0 +1,85 @@
+@@ -0,0 +1,55 @@
 +.latest-posts-container {
 +  max-width: 1200px;
 +  margin: 0 auto;
