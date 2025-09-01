@@ -1,4 +1,4 @@
-query Users{
+query FetchUser{
   user(id: "1") {
     name,
     email
