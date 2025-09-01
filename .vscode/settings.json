@@ -1,7 +1,9 @@
 {
   "rust-analyzer.linkedProjects": [
+    "application/api/Cargo.toml",
     "application/api_test/Cargo.toml"
   ],
+  "rust-analyzer.diagnostics.disabled": ["macro-error"],
   "[rust]": {
     "editor.defaultFormatter": "rust-lang.rust-analyzer",
     "editor.formatOnSave": true,
