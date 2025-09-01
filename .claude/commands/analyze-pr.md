@@ -129,7 +129,7 @@ This command generates responses in Japanese, optimized for Japanese development
 #### components/LatestPosts.tsx (新規作成)
 ```diff
 +++ b/components/LatestPosts.tsx
-@@ -0,0 +1,142 @@
+@@ -0,0 +1,80 @@
 +import React, { useState, useEffect } from 'react';
 +import { useLatestPosts } from '../hooks/useLatestPosts';
 +import { usePagination } from '../hooks/usePagination';
@@ -215,7 +215,7 @@ This command generates responses in Japanese, optimized for Japanese development
 #### styles/LatestPosts.module.css (新規作成)
 ```diff
 +++ b/styles/LatestPosts.module.css
-@@ -0,0 +1,85 @@
+@@ -0,0 +1,55 @@
 +.latest-posts-container {
 +  max-width: 1200px;
 +  margin: 0 auto;
