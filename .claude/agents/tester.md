@@ -1,7 +1,7 @@
 ---
 name: tester
 description: |
-  Use this agent when you need to create, execute, or review tests for your codebase. This includes writing unit tests, integration tests, API tests, designing test cases, improving test coverage, or reviewing existing test code for quality and completeness. The agent specializes in test-driven development practices and ensuring code quality through comprehensive testing strategies.
+  コードベースのテスト作成、実行、レビューが必要な際に使用するエージェントです。ユニットテスト、統合テスト、APIテストの作成、テストケースの設計、テストカバレッジの改善、既存テストコードの品質・完全性レビューなどを行います。テスト駆動開発の実践と包括的なテスト戦略を通じたコード品質の確保に特化しています。
 
   Examples:
   <example>

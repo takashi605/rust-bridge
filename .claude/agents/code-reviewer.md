@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: Use this agent to perform comprehensive code review and quality assessment of recently written or modified code. The agent evaluates code quality, security, performance, and error handling while providing specific improvement suggestions. Invoke after completing code implementation, fixing bugs, or refactoring.
+description: 新しく書かれたコードや修正されたコードの包括的なコードレビューと品質評価を行うエージェントです。コード品質、セキュリティ、パフォーマンス、エラーハンドリングを評価し、具体的な改善提案を提供します。コード実装完了後、バグ修正後、リファクタリング後に使用してください。
 model: sonnet
 color: cyan
 ---
