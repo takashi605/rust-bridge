@@ -43,13 +43,13 @@ application/
 ### schema
 - .graphql ファイルを置く
 
-### api-クレート
+### api クレート
 - GraphQL API サーバー
 - 主要な依存クレートは以下
   - anyhow
-  - async-graphql
+  - juniper
+  - juniper-from-schema
   - actix-web
-  - async-graphql-actix-web
   - tokio
 
 ### api-test クレート
@@ -97,13 +97,9 @@ mod handle_funcs {
   pub async fn echo(req_body: String) -> impl Responder {
     HttpResponse::Ok().body(req_body)
   }
-## 注意点
-- 学習を効率的に進めるため、DB との通信は行わない。そのため、 今回は Mutation オペレーションは使わない。
 
   #[get("/fivesix")]
-  pub async fn fives## 注意点
-- 学習を効率的に進めるため、DB との通信は行わない。そのため、 今回は Mutation オペレーションは使わない。
-ix() -> impl Responder {
+  pub async fn fivesix() -> impl Responder {
     #[derive(serde::Serialize)]
     struct Numbers {
       num1: i32,
