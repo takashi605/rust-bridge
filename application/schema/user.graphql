@@ -1,0 +1,13 @@
+schema {
+  query: Query;
+}
+
+type Query {
+  user(id: ID!): User! @juniper(ownership: "owned")
+}
+
+type User {
+  id: ID! @juniper(ownership: "owned")
+  name: String! @juniper(ownership: "owned")
+  email: String! @juniper(ownership: "owned")
+}
