@@ -1,8 +1,14 @@
+#![recursion_limit = "512"]
+
 mod db;
-mod models;
 mod handlers;
+mod models;
+
+use std::sync::Arc;
 
 use actix_web::{web, App, HttpServer};
+
+use crate::handlers::graphql::{Mutation, Query, Schema};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -10,10 +16,17 @@ async fn main() -> anyhow::Result<()> {
 
     // データベース接続プールを作成
     let pool = db::create_connection_pool().await?;
-    
+
+    let schema = Arc::new(Schema::new(Query, Mutation));
+
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(pool.clone()))
+            .app_data(web::Data::from(schema.clone()))
+            .route(
+                "/graphql",
+                web::post().to(handlers::graphql::graphql_handler),
+            )
             .route("/", web::get().to(|| async { "API Server is running" }))
             .route("/health", web::get().to(handlers::health))
             .route("/users", web::get().to(handlers::get_users))
