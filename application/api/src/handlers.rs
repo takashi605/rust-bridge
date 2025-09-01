@@ -1,3 +1,5 @@
+pub mod graphql;
+
 use actix_web::{web, HttpResponse, Result};
 use serde_json::json;
 use sqlx::PgPool;
