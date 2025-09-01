@@ -1,7 +1,7 @@
 ---
 name: coder
 description: |
-  Use this agent when you need to handle coding tasks including code generation, modification, refactoring, debugging, or test creation. This agent specializes in writing clean, maintainable code following best practices and SOLID principles.
+  コード生成、変更、リファクタリング、デバッグ、テスト作成などのコーディングタスクを扱う際に使用するエージェントです。このエージェントは、ベストプラクティスとSOLID原則に従って、クリーンで保守可能なコードの作成に特化しています。
 
   Examples:
   <example>
