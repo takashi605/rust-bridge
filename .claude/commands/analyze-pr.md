@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(gh pr diff:*), Bash(gh pr view:*), Bash(git diff:*), Bash(git log:*), Grep, Read
+description: GitHub PRの差分を分析し、変更内容の構造化されたレポートを提供します
+---
+
 # Claude Command: Analyze PR
 
 ## Command Overview
