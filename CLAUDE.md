@@ -40,9 +40,8 @@ application/
 └ api_test/
 ```
 
-### schema クレート
-- .graphql ファイルに SDL を定義し、lib.rs から公開する
-- 主要な依存クレートはなし
+### schema
+- .graphql ファイルを置く
 
 ### api-クレート
 - GraphQL API サーバー
@@ -52,18 +51,15 @@ application/
   - actix-web
   - async-graphql-actix-web
   - tokio
-  - schema(自作クレート)
 
 ### api-test クレート
 - api クレートで立ち上げたサーバーに対して api テストを実行する
-- リクエスト型・レスポンス型は schema クレート内の SDL から生成する(graphql-client を使用)
 - [https://countries.trevorblades.com](https://countries.trevorblades.com/) に対する api テストを書き、基本的な GraphQL リクエストの方法を学ぶ
 - 主要な依存クレートは以下
   - anyhow
   - graphql-client
   - reqwest
   - tokio
-  - schema(自作クレート)
 
 ## コンテナサービス
 ### api サービス
