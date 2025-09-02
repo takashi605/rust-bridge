@@ -1,4 +1,4 @@
-FROM rust:1.83-slim
+FROM rust:1.86-slim
 
 WORKDIR /app
 
@@ -10,15 +10,15 @@ RUN apt-get update && apt-get install -y \
 
 RUN useradd -m -u 1000 -s /bin/bash apiuser
 
+USER apiuser
+
+RUN cargo install bacon
+
 COPY --chown=apiuser:apiuser application/api /app/api
 COPY --chown=apiuser:apiuser application/schema /app/schema
 
 WORKDIR /app/api
 
-USER apiuser
-
-RUN cargo build --release
-
 EXPOSE 8080
 
-CMD ["cargo", "run", "--release"]
+CMD ["bacon", "run", "--headless"]

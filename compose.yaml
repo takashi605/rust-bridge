@@ -13,14 +13,20 @@ services:
       timeout: 5s
       retries: 3
     volumes:
-      - ./application/api:/app/api:cached
+      - type: bind
+        source: ./application/api
+        target: /app/api
+        consistency: cached
 
   api-test:
     build:
       context: .
       dockerfile: ./containers/api-test/Dockerfile
     volumes:
-      - ./application/api_test:/app/api_test:cached
+      - type: bind
+        source: ./application/api_test
+        target: /app/api_test
+        consistency: cached
     networks:
       - api-network
     profiles:
@@ -36,7 +42,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data
     environment:
       - POSTGRES_DB=graphql_api
       - POSTGRES_USER=postgres
