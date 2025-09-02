@@ -11,9 +11,9 @@ pub struct QueryRoot;
 
 #[Object]
 impl QueryRoot {
-    async fn user(&self, _ctx: &Context<'_>) -> User {
+    async fn user(&self, _ctx: &Context<'_>, id: String) -> User {
         User {
-            id: "1".to_string(),
+            id,
             name: "Alice Johnson".to_string(),
             email: "alice@example.com".to_string(),
         }
@@ -41,7 +41,7 @@ mod tests {
         
         // 重要な型定義の存在を確認
         assert!(schema.contains("type QueryRoot {"));
-        assert!(schema.contains("user: User!"));
+        assert!(schema.contains("user(id: String!): User!"));
 
         assert!(schema.contains("type User {"));
         assert!(schema.contains("id: String!"));
@@ -56,7 +56,7 @@ mod tests {
     async fn test_fetch_user_query() {
         let query = r#"
             query {
-                user {
+                user (id: "1") {
                     id
                     name
                     email
