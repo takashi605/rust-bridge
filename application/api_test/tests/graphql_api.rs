@@ -1,33 +1,23 @@
-use graphql_client::GraphQLQuery;
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "../api_schema/user.graphql",
-    query_path = "src/graphql/queries/fetch_user.graphql",
-    response_derives = "Debug"
-)]
-pub struct FetchUser;
-
 #[tokio::test]
 async fn test_fetch_user() {
-    use fetch_user::Variables;
+    use api_test::graphql::cynic_queries::fetch_user::{FetchUser, FetchUserVars};
+    use cynic::{http::ReqwestExt, QueryBuilder};
+
+    let operation = FetchUser::build(FetchUserVars {
+        id: "1".into(),
+    });
 
     let client = reqwest::Client::new();
-    let endpoint = "http://api:8080/graphql";
+    let resp: cynic::GraphQlResponse<FetchUser> = client
+        .post("http://api:8080/graphql")
+        .run_graphql(operation)
+        .await
+        .unwrap();
 
-    let resp =
-        graphql_client::reqwest::post_graphql::<FetchUser, _>(&client, endpoint, Variables {})
-            .await
-            .expect("GraphQL リクエストの送信に失敗しました");
+    println!("Response: {:?}", resp);
 
-    let user = resp.data.unwrap().user;
-    assert_eq!(
-        user.name, "Alice Johnson",
-        "ユーザーの名前が期待と異なります"
-    );
-
-    assert_eq!(
-        user.email, "alice@example.com",
-        "ユーザーのメールアドレスが期待と異なります"
-    );
+    let data = resp.data.expect("No data in response");
+    assert_eq!(data.user.id, "1");
+    assert_eq!(data.user.name, "Alice Johnson");
+    assert_eq!(data.user.email, "alice@example.com");
 }
