@@ -15,9 +15,10 @@ async fn test_fetch_user() {
     let client = reqwest::Client::new();
     let endpoint = "http://api:8080/graphql";
 
-    let resp = graphql_client::reqwest::post_graphql::<FetchUser, _>(&client, endpoint, Variables {})
-        .await
-        .expect("GraphQL リクエストの送信に失敗しました");
+    let resp =
+        graphql_client::reqwest::post_graphql::<FetchUser, _>(&client, endpoint, Variables {})
+            .await
+            .expect("GraphQL リクエストの送信に失敗しました");
 
     let user = resp.data.unwrap().user;
     assert_eq!(
