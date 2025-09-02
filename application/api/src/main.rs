@@ -4,11 +4,8 @@ mod db;
 mod handlers;
 mod models;
 
-use std::sync::Arc;
-
 use actix_web::{web, App, HttpServer};
-
-use crate::handlers::graphql::{Mutation, Query, Schema};
+use api_schema::build_schema;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -17,12 +14,12 @@ async fn main() -> anyhow::Result<()> {
     // データベース接続プールを作成
     let pool = db::create_connection_pool().await?;
 
-    let schema = Arc::new(Schema::new(Query, Mutation));
+    let schema = build_schema();
 
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .app_data(web::Data::from(schema.clone()))
+            .app_data(web::Data::new(schema.clone()))
             .route(
                 "/graphql",
                 web::post().to(handlers::graphql::graphql_handler),
