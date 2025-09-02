@@ -2,7 +2,7 @@ use actix_web::{web, HttpResponse};
 use juniper::{http::GraphQLRequest, ID};
 use juniper_from_schema::graphql_schema_from_file;
 
-graphql_schema_from_file!("../schema/user.graphql");
+graphql_schema_from_file!("../api_schema/user.graphql");
 
 pub struct Context;
 impl juniper::Context for Context {}
