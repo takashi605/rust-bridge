@@ -35,12 +35,12 @@ api-request-builder(root)/
 ## クレートの構成
 ```
 application/
-├ schema/
+├ api_schema/
 ├ api/
 └ api_test/
 ```
 
-### schema クレート
+### api_schema クレート
 - rust コードベースの graphql スキーマを定義
 
 ### api クレート
