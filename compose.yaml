@@ -17,6 +17,10 @@ services:
         source: ./application/api
         target: /app/api
         consistency: cached
+      - type: bind
+        source: ./application/api_schema
+        target: /app/api_schema
+        consistency: cached
 
   api-test:
     build:
