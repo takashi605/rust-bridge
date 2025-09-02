@@ -1,4 +1,4 @@
-use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, SimpleObject};
+use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, SimpleObject, ID};
 
 #[derive(SimpleObject)]
 struct User {
@@ -11,9 +11,9 @@ pub struct QueryRoot;
 
 #[Object]
 impl QueryRoot {
-    async fn user(&self, _ctx: &Context<'_>, id: String) -> User {
+    async fn user(&self, _ctx: &Context<'_>, id: ID) -> User {
         User {
-            id,
+            id: id.to_string(),
             name: "Alice Johnson".to_string(),
             email: "alice@example.com".to_string(),
         }
@@ -38,16 +38,16 @@ mod tests {
     #[test]
     fn test_sdl() {
         let schema = schema_sdl();
-        
+
         // 重要な型定義の存在を確認
         assert!(schema.contains("type QueryRoot {"));
-        assert!(schema.contains("user(id: String!): User!"));
+        assert!(schema.contains("user(id: ID!): User!"));
 
         assert!(schema.contains("type User {"));
         assert!(schema.contains("id: String!"));
         assert!(schema.contains("name: String!"));
         assert!(schema.contains("email: String!"));
-        
+
         assert!(schema.contains("schema {"));
         assert!(schema.contains("query: QueryRoot"));
     }
