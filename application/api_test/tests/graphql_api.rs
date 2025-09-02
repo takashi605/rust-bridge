@@ -2,7 +2,7 @@ use graphql_client::GraphQLQuery;
 
 #[derive(GraphQLQuery)]
 #[graphql(
-    schema_path = "../schema/user.graphql",
+    schema_path = "../api_schema/user.graphql",
     query_path = "src/graphql/queries/fetch_user.graphql",
     response_derives = "Debug"
 )]
