@@ -8,22 +8,19 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+RUN useradd -m -u 1000 -s /bin/bash apiuser
+
 RUN cargo install bacon
 
-COPY application/api /app/api
-COPY application/schema /app/schema
+COPY --chown=apiuser:apiuser application/api /app/api
+COPY --chown=apiuser:apiuser application/schema /app/schema
+RUN chown -R apiuser:apiuser /usr/local/cargo/
 
 WORKDIR /app/api
 
-RUN cargo build --release
-
-RUN useradd -m -u 1000 -s /bin/bash apiuser
-
-RUN chown -R apiuser:apiuser /app
-RUN chown -R apiuser:apiuser /app/schema
-RUN chown -R apiuser:apiuser /usr/local/cargo
-
 USER apiuser
+
+RUN cargo build --release
 
 EXPOSE 8080
 
