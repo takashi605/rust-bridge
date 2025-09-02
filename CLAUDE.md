@@ -35,20 +35,20 @@ api-request-builder(root)/
 ## クレートの構成
 ```
 application/
-├ schema/
+├ api_schema/
 ├ api/
 └ api_test/
 ```
 
-### schema
-- .graphql ファイルを置く
+### api_schema クレート
+- rust コードベースの graphql スキーマを定義
 
 ### api クレート
 - GraphQL API サーバー
 - 主要な依存クレートは以下
   - anyhow
-  - juniper
-  - juniper-from-schema
+  - async-graphql
+  - async-graphql-actix-web
   - actix-web
   - tokio
 
@@ -57,7 +57,7 @@ application/
 - [https://countries.trevorblades.com](https://countries.trevorblades.com/) に対する api テストを書き、基本的な GraphQL リクエストの方法を学ぶ
 - 主要な依存クレートは以下
   - anyhow
-  - graphql-client
+  - cynic
   - reqwest
   - tokio
 

@@ -1,1 +1,1 @@
-# schema-fiarst-graphql-api
+# code-first-graphql-api

@@ -3,4 +3,4 @@ command = ["cargo", "run"]
 need_stdout = true
 allow_warnings = true
 on_change_strategy = "kill_then_restart"
-watch = ["src"]
+watch = ["src", "Cargo.toml", "../api_schema/src", "../api_schema/Cargo.toml"]

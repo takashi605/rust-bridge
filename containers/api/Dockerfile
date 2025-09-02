@@ -15,7 +15,7 @@ USER apiuser
 RUN cargo install bacon
 
 COPY --chown=apiuser:apiuser application/api /app/api
-COPY --chown=apiuser:apiuser application/schema /app/schema
+COPY --chown=apiuser:apiuser application/api_schema /app/api_schema
 
 WORKDIR /app/api
 
