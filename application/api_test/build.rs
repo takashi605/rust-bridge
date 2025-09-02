@@ -2,7 +2,7 @@ fn main() {
     let sdl = api_schema::schema_sdl();
     cynic_codegen::register_schema("app")
         .from_sdl(&sdl)
-        .unwrap()
+        .expect("Failed to register GraphQL schema from SDL")
         .as_default()
-        .unwrap();
+        .expect("Failed to set schema as default");
 }
