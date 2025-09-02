@@ -1,9 +1,5 @@
 use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, SimpleObject};
 
-pub fn test() -> i32 {
-    1
-}
-
 #[derive(SimpleObject)]
 struct User {
     id: String,
@@ -33,12 +29,6 @@ pub fn build_schema() -> GrSchema {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_test() {
-        test();
-        assert_eq!(1, 1);
-    }
 
     #[tokio::test]
     async fn test_fetch_user_query() {
