@@ -19,8 +19,6 @@ COPY --chown=apiuser:apiuser application/schema /app/schema
 
 WORKDIR /app/api
 
-RUN cargo build --release
-
 EXPOSE 8080
 
 CMD ["bacon", "run", "--headless"]
