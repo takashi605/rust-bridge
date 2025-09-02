@@ -26,9 +26,31 @@ pub fn build_schema() -> GrSchema {
     async_graphql::Schema::build(QueryRoot, EmptyMutation, EmptySubscription).finish()
 }
 
+pub fn schema_sdl() -> String {
+    let schema = build_schema();
+    schema.sdl()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_sdl() {
+        let schema = schema_sdl();
+        
+        // 重要な型定義の存在を確認
+        assert!(schema.contains("type QueryRoot {"));
+        assert!(schema.contains("user: User!"));
+
+        assert!(schema.contains("type User {"));
+        assert!(schema.contains("id: String!"));
+        assert!(schema.contains("name: String!"));
+        assert!(schema.contains("email: String!"));
+        
+        assert!(schema.contains("schema {"));
+        assert!(schema.contains("query: QueryRoot"));
+    }
 
     #[tokio::test]
     async fn test_fetch_user_query() {
