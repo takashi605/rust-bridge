@@ -11,7 +11,7 @@ impl UserRepository for UserRepositoryMock {
                 email: "alice@example.com".to_string(),
             })
         } else {
-            Err(anyhow::anyhow!("User not found"))
+            Err(anyhow::anyhow!("User with ID {} not found", id))
         }
     }
 }
