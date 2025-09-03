@@ -19,7 +19,7 @@ impl QueryRoot {
             .map_err(|_| anyhow::anyhow!("Invalid user ID format"))?;
         
         let repository = UserRepositoryMock;
-        let user = repository.fetch_by_id(user_id).unwrap();
+        let user = repository.fetch_by_id(user_id)?;
         Ok(User {
             id: user.id.to_string(),
             name: user.name,
@@ -104,5 +104,24 @@ mod tests {
 
         assert!(resp.errors.len() > 0);
         assert!(resp.errors[0].message.contains("Invalid user ID format"));
+    }
+
+    #[tokio::test]
+    async fn test_user_query_with_nonexistent_id() {
+        let query = r#"
+            query {
+                user (id: "999") {
+                    id
+                    name
+                    email
+                }
+            }
+        "#;
+
+        let schema = build_schema();
+        let resp = schema.execute(query).await;
+
+        assert!(resp.errors.len() > 0);
+        assert!(resp.errors[0].message.contains("User not found"));
     }
 }
