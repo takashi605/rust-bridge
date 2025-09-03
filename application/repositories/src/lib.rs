@@ -2,6 +2,8 @@ pub mod user;
 mod db {
     pub mod models;
 }
-mod mock {
-    mod user;
+
+// TODO リポジトリが実装されるまでモックを使う
+pub mod mock {
+    pub mod user;
 }
