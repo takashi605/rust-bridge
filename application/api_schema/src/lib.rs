@@ -1,4 +1,5 @@
 use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, SimpleObject, ID};
+use anyhow::Result;
 use repositories::mock::user::UserRepositoryMock;
 use repositories::user::UserRepository;
 
@@ -13,14 +14,17 @@ pub struct QueryRoot;
 
 #[Object]
 impl QueryRoot {
-    async fn user(&self, _ctx: &Context<'_>, id: ID) -> User {
+    async fn user(&self, _ctx: &Context<'_>, id: ID) -> Result<User> {
+        let user_id = id.parse::<i32>()
+            .map_err(|_| anyhow::anyhow!("Invalid user ID format"))?;
+        
         let repository = UserRepositoryMock;
-        let user = repository.fetch_by_id(id.parse::<i32>().unwrap()).unwrap();
-        User {
+        let user = repository.fetch_by_id(user_id).unwrap();
+        Ok(User {
             id: user.id.to_string(),
             name: user.name,
             email: user.email,
-        }
+        })
     }
 }
 
@@ -81,5 +85,24 @@ mod tests {
         });
 
         assert_eq!(respond_json, expected_json);
+    }
+
+    #[tokio::test]
+    async fn test_user_query_with_invalid_id() {
+        let query = r#"
+            query {
+                user (id: "invalid") {
+                    id
+                    name
+                    email
+                }
+            }
+        "#;
+
+        let schema = build_schema();
+        let resp = schema.execute(query).await;
+
+        assert!(resp.errors.len() > 0);
+        assert!(resp.errors[0].message.contains("Invalid user ID format"));
     }
 }
