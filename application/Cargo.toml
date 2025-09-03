@@ -2,6 +2,7 @@
 members = [
     "api",
     "api_test",
-    "api_schema"
+    "api_schema",
+    "repositories"
 ]
 resolver = "2"
