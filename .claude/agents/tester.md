@@ -109,6 +109,7 @@ You aim for:
 ### Execution Flow
 1. **Environment Setup**: Prepare dependencies and test data
 2. **Test Execution**: Run tests in appropriate order and groupings
+   - **Project Test Command**: Execute tests using `make test` from the project root directory
 3. **Result Analysis**: Identify root causes of failures
 4. **Report Generation**: Provide coverage and quality metrics
 5. **Improvement Proposals**: Suggest test suite optimizations

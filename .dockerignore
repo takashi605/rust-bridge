@@ -1,0 +1,30 @@
+# Rust build artifacts
+**/target/
+**/*.log
+
+# Don't ignore Cargo.lock - it's needed for reproducible builds
+# **/*.lock  # Commented out to allow Cargo.lock
+
+# IDE files
+**/.vscode/
+**/.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Temporary files
+**/*.tmp
+**/*.bak
+**/*~
+
+# Node.js (if any)
+**/node_modules/

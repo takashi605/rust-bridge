@@ -86,10 +86,7 @@ Your primary expertise includes:
    - Follow project-specific conventions from CLAUDE.md
    - Ensure code is testable and modular
 
-4. **Testing**:
-   - Create comprehensive test cases
-   - Consider edge cases and error conditions
-   - Verify performance characteristics
+4. **Testing**: [Delegated to tester agent (detailed below)]
 
 5. **Documentation**:
    - Add necessary inline documentation

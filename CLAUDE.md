@@ -6,6 +6,13 @@ Rust を用いて、GraphQL API を作成します。これは API テスト駆�
 
 ## ClaudeCodeAIAgent への指示
 - やり取りは日本語で行ってください。
+- コード作成・修正タスクでは必ず coder エージェントを使用してください
+- コードレビューが必要な場合は code-reviewer エージェントを使用してください
+- 複雑なタスクは適切な専門エージェントに委譲してください
+- 新しいコードを書く際は coder エージェント使用必須
+- バグ修正時は coder エージェント使用必須
+- リファクタリング時は coder エージェント使用必須
+- テスト作成時は tester エージェント使用必須
 
 ## プロジェクト要件
 1. GraphQL のリクエスト送信方法を学ぶため、学習用テスト(Learning Test)を書く。具体的には、[https://countries.trevorblades.com](https://countries.trevorblades.com/) に対する api テストを書く
