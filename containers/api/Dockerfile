@@ -14,10 +14,9 @@ USER apiuser
 
 RUN cargo install bacon
 
-COPY --chown=apiuser:apiuser application/api /app/api
-COPY --chown=apiuser:apiuser application/api_schema /app/api_schema
+COPY --chown=apiuser:apiuser application /app
 
-WORKDIR /app/api
+WORKDIR /app
 
 EXPOSE 8080
 
