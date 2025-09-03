@@ -25,21 +25,48 @@ jobs:
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Please review this pull request using the code-reviewer agent.
+            Please conduct a comprehensive code review for this PR. Follow these steps:
 
-            Note: The PR branch is already checked out in the current working directory.
+            1. **Pre-analysis**
+               - Use `gh pr diff ${{ github.event.pull_request.number }}` to examine PR changes
+               - Use `gh pr view ${{ github.event.pull_request.number }}` to get PR information
+               - Analyze changed files in detail using `Glob` and `Read` tools
 
-            Use the Task tool to invoke the code-reviewer agent with the following context:
-            - REPO: ${{ github.repository }}
-            - PR NUMBER: ${{ github.event.pull_request.number }}
-            - Request a comprehensive code review focusing on the changes in this PR
-            
-            After receiving the review from the code-reviewer agent, post the findings as GitHub comments:
-            - Use `gh pr comment:*` for the overall review summary
-            - Use `mcp__github_inline_comment__create_inline_comment` to highlight specific areas of concern
-            
-            Only your GitHub comments that you post will be seen, so make sure to convert the agent's review into appropriate GitHub comments.
-            If the PR has already been reviewed, or there are no noteworthy changes, don't post anything.
+            2. **Comprehensive Review Execution**
+               Use the Task tool to invoke the code-reviewer agent with the following detailed request:
+               ```
+               Please conduct an extremely detailed and comprehensive code review of the following PR changes:
+               
+               **Review Target**
+               - REPO: ${{ github.repository }}
+               - PR NUMBER: ${{ github.event.pull_request.number }}
+               
+               **Mandatory Check Items**
+               - Security vulnerabilities (input validation, authentication/authorization, SQL injection, etc.)
+               - Performance issues (algorithm efficiency, memory usage, DB query optimization)
+               - Code quality (readability, maintainability, duplication, complexity)
+               - Error handling (anyhow usage, Result types, error propagation)
+               - Rust-specific issues (ownership, lifetimes, type safety, idioms)
+               - Architecture (design patterns, dependencies, separation of concerns)
+               - Testing (coverage, test patterns, edge cases)
+               - Documentation (comments, API docs, README updates)
+               
+               **Output Requirements**
+               - Report ALL issues found (including minor ones)
+               - Include specific fix suggestions for each issue
+               - Categorize by severity (Critical/High/Medium/Low)
+               - Specify file names and line numbers
+               ```
+
+            3. **GitHub Results Posting**
+               Post review results in the following format:
+               - Use `gh pr comment:*` for overall review summary
+               - Use `mcp__github_inline_comment__create_inline_comment` for inline comments on specific issues
+               
+            **Important Notes**
+               - Avoid duplicate posts if already reviewed
+               - Skip posting if no changes or only trivial changes
+               - Ensure all findings are reported without omission
 
           claude_args: |
-            --allowedTools "Task,mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*), Bash(gh pr diff:*), Bash(gh pr view:*)"
+            --allowedTools "Task,mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Glob,Grep"
