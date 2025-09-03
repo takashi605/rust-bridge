@@ -1,8 +1,4 @@
-pub struct User {
-    pub id: i32,
-    pub name: String,
-    pub email: String,
-}
+use crate::db::models::User;
 
 pub struct UserRepository;
 impl UserRepository {
