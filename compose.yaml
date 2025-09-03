@@ -14,12 +14,8 @@ services:
       retries: 3
     volumes:
       - type: bind
-        source: ./application/api
-        target: /app/api
-        consistency: cached
-      - type: bind
-        source: ./application/api_schema
-        target: /app/api_schema
+        source: ./application
+        target: /app
         consistency: cached
 
   api-test:
@@ -28,8 +24,8 @@ services:
       dockerfile: ./containers/api-test/Dockerfile
     volumes:
       - type: bind
-        source: ./application/api_test
-        target: /app/api_test
+        source: ./application
+        target: /app
         consistency: cached
     networks:
       - api-network
