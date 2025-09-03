@@ -1,3 +1,5 @@
+pub mod user;
+
 fn four() -> i32 {
     2 + 2
 }
