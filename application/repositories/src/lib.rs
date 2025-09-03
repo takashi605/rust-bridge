@@ -1,5 +1,6 @@
 pub mod user;
 mod db;
+mod mock;
 
 fn four() -> i32 {
     2 + 2
