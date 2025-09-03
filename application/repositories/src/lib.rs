@@ -1,6 +1,10 @@
 pub mod user;
-mod db;
-mod mock;
+mod db {
+    pub mod models;
+}
+mod mock {
+    mod user;
+}
 
 fn four() -> i32 {
     2 + 2
