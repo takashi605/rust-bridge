@@ -1,4 +1,6 @@
 use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, SimpleObject, ID};
+use repositories::mock::user::UserRepositoryMock;
+use repositories::user::UserRepository;
 
 #[derive(SimpleObject)]
 struct User {
@@ -12,10 +14,12 @@ pub struct QueryRoot;
 #[Object]
 impl QueryRoot {
     async fn user(&self, _ctx: &Context<'_>, id: ID) -> User {
+        let repository = UserRepositoryMock;
+        let user = repository.fetch_by_id(id.parse::<i32>().unwrap()).unwrap();
         User {
-            id: id.to_string(),
-            name: "Alice Johnson".to_string(),
-            email: "alice@example.com".to_string(),
+            id: user.id.to_string(),
+            name: user.name,
+            email: user.email,
         }
     }
 }
