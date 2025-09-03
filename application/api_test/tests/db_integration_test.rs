@@ -22,7 +22,7 @@ async fn test_users_endpoint() -> Result<()> {
     assert!(json.is_array());
     
     // 少なくとも1人のユーザーが存在することを確認（テストデータから）
-    let users = json.as_array().unwrap();
+    let users = json.as_array().expect("Response should be an array");
     assert!(users.len() > 0);
     
     // 最初のユーザーの構造を確認

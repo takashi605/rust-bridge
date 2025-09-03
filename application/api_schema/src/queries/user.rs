@@ -47,7 +47,7 @@ mod tests {
         let schema = build_schema();
         let resp = schema.execute(query).await;
 
-        let respond_json = resp.data.into_json().unwrap();
+        let respond_json = resp.data.into_json().expect("Failed to convert response data to JSON");
         let expected_json = serde_json::json!({
             "user": {
                 "id": "1",

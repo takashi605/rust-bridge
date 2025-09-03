@@ -22,7 +22,7 @@ mod tests {
 
     #[test]
     fn fetch_single_user() {
-        let user = UserRepositoryMock.fetch_by_id(1).unwrap();
+        let user = UserRepositoryMock.fetch_by_id(1).expect("Failed to fetch user with ID 1");
         assert_eq!(user.id, 1);
         assert_eq!(user.name, "Alice Johnson");
         assert_eq!(user.email, "alice@example.com");

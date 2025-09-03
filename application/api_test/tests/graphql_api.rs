@@ -12,7 +12,7 @@ async fn test_fetch_user() {
         .post("http://api:8080/graphql")
         .run_graphql(operation)
         .await
-        .unwrap();
+        .expect("Failed to execute GraphQL request");
 
     println!("Response: {:?}", resp);
 
