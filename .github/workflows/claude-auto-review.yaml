@@ -33,7 +33,7 @@ jobs:
                - Analyze changed files in detail using `Glob` and `Read` tools
 
             2. **Comprehensive Review Execution**
-               Use the Task tool to invoke the code-reviewer agent with the following detailed request:
+               Use the Task tool to invoke the code-reviewer agent with the following request:
                ```
                Please conduct an extremely detailed and comprehensive code review of the following PR changes:
                
@@ -41,15 +41,7 @@ jobs:
                - REPO: ${{ github.repository }}
                - PR NUMBER: ${{ github.event.pull_request.number }}
                
-               **Mandatory Check Items**
-               - Security vulnerabilities (input validation, authentication/authorization, SQL injection, etc.)
-               - Performance issues (algorithm efficiency, memory usage, DB query optimization)
-               - Code quality (readability, maintainability, duplication, complexity)
-               - Error handling (anyhow usage, Result types, error propagation)
-               - Rust-specific issues (ownership, lifetimes, type safety, idioms)
-               - Architecture (design patterns, dependencies, separation of concerns)
-               - Testing (coverage, test patterns, edge cases)
-               - Documentation (comments, API docs, README updates)
+               Follow the comprehensive review instructions from .claude/prompts/comprehensive-code-review.md
                
                **Output Requirements**
                - Report ALL issues found (including minor ones)
