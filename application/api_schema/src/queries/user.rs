@@ -19,7 +19,7 @@ impl UserQuery {
             .map_err(|_| anyhow::anyhow!("Invalid user ID format"))?;
         
         let repository = UserRepositoryMock;
-        let user = repository.fetch_by_id(user_id)?;
+        let user = repository.fetch_by_id(user_id).await?;
         Ok(User {
             id: user.id.to_string(),
             name: user.name,

@@ -3,7 +3,7 @@ use anyhow::Result;
 
 pub struct UserRepositoryMock;
 impl UserRepository for UserRepositoryMock {
-    fn fetch_by_id(&self, id: i32) -> Result<User> {
+    async fn fetch_by_id(&self, id: i32) -> Result<User> {
         if id == 1 {
             Ok(User {
                 id: 1,
@@ -20,9 +20,9 @@ impl UserRepository for UserRepositoryMock {
 mod tests {
     use super::*;
 
-    #[test]
-    fn fetch_single_user() {
-        let user = UserRepositoryMock.fetch_by_id(1).expect("Failed to fetch user with ID 1");
+    #[tokio::test]
+    async fn fetch_single_user() {
+        let user = UserRepositoryMock.fetch_by_id(1).await.expect("Failed to fetch user with ID 1");
         assert_eq!(user.id, 1);
         assert_eq!(user.name, "Alice Johnson");
         assert_eq!(user.email, "alice@example.com");
