@@ -94,6 +94,6 @@ mod tests {
         let resp = schema.execute(query).await;
 
         assert!(resp.errors.len() > 0);
-        assert!(resp.errors[0].message.contains("User not found"));
+        assert!(resp.errors[0].message.contains("User with ID 999 not found"));
     }
 }
