@@ -26,7 +26,6 @@ async fn main() -> anyhow::Result<()> {
             )
             .route("/", web::get().to(|| async { "API Server is running" }))
             .route("/health", web::get().to(handlers::health))
-            .route("/users", web::get().to(handlers::get_users))
     })
     .bind("0.0.0.0:8080")?
     .run()
