@@ -2,6 +2,8 @@ use crate::{db::models::User, user::UserRepository};
 use anyhow::Result;
 
 pub struct UserRepositoryMock;
+
+#[async_trait::async_trait]
 impl UserRepository for UserRepositoryMock {
     async fn fetch_by_id(&self, id: i32) -> Result<User> {
         if id == 1 {
@@ -11,7 +13,7 @@ impl UserRepository for UserRepositoryMock {
                 email: "alice@example.com".to_string(),
             })
         } else {
-            Err(anyhow::anyhow!("User with ID {} not found", id))
+            anyhow::bail!("User with ID {} not found", id)
         }
     }
 }
@@ -22,7 +24,10 @@ mod tests {
 
     #[tokio::test]
     async fn fetch_single_user() {
-        let user = UserRepositoryMock.fetch_by_id(1).await.expect("Failed to fetch user with ID 1");
+        let user = UserRepositoryMock
+            .fetch_by_id(1)
+            .await
+            .expect("Failed to fetch user with ID 1");
         assert_eq!(user.id, 1);
         assert_eq!(user.name, "Alice Johnson");
         assert_eq!(user.email, "alice@example.com");

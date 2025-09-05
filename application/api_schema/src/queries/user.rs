@@ -1,6 +1,7 @@
+use std::sync::Arc;
+
 use anyhow::Result;
 use async_graphql::{Context, Object, SimpleObject, ID};
-use repositories::mock::user::UserRepositoryMock;
 use repositories::user::UserRepository;
 
 #[derive(SimpleObject)]
@@ -14,12 +15,15 @@ pub struct UserQuery;
 
 #[Object]
 impl UserQuery {
-    pub async fn user(&self, _ctx: &Context<'_>, id: ID) -> Result<User> {
+    pub async fn user(&self, ctx: &Context<'_>, id: ID) -> Result<User> {
         let user_id = id
             .parse::<i32>()
             .map_err(|_| anyhow::anyhow!("Invalid user ID format"))?;
 
-        let repository = UserRepositoryMock;
+        let repository = ctx
+            .data::<Arc<dyn UserRepository>>()
+            .map_err(|_| anyhow::anyhow!("UserRepository not found in context"))?;
+
         let user = repository.fetch_by_id(user_id).await?;
         Ok(User {
             id: user.id.to_string(),
@@ -103,6 +107,8 @@ mod tests {
         let resp = schema.execute(query).await;
 
         assert!(resp.errors.len() > 0);
-        assert!(resp.errors[0].message.contains("User with ID 999 not found"));
+        assert!(resp.errors[0]
+            .message
+            .contains("User with ID 999 not found"));
     }
 }

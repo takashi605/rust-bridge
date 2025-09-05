@@ -2541,6 +2541,7 @@ name = "repositories"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "serde",
  "serde_json",
  "sqlx 0.8.6",

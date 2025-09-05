@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use anyhow::Result;
 use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, SchemaBuilder, ID};
 
@@ -28,6 +30,7 @@ pub fn build_schema_with_context<R: 'static + Send + Sync>(repository: R) -> GrS
 where
     R: repositories::user::UserRepository,
 {
+    let repository: Arc<dyn repositories::user::UserRepository> = Arc::new(repository);
     let schema = initialize_schema_builder().data(repository).finish();
     schema
 }

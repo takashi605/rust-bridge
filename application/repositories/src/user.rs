@@ -1,11 +1,10 @@
-use std::future::Future;
-
 use crate::db::models::User;
 use anyhow::Result;
 use sqlx::PgPool;
 
-pub trait UserRepository {
-    fn fetch_by_id(&self, id: i32) -> impl Future<Output = Result<User>> + Send;
+#[async_trait::async_trait]
+pub trait UserRepository: Send + Sync {
+    async fn fetch_by_id(&self, id: i32) -> Result<User>;
 }
 
 pub struct SqlxUserRepository {
@@ -18,6 +17,7 @@ impl SqlxUserRepository {
     }
 }
 
+#[async_trait::async_trait]
 impl UserRepository for SqlxUserRepository {
     async fn fetch_by_id(&self, id: i32) -> Result<User> {
         let user = sqlx::query_as::<_, User>("SELECT id, name, email FROM users WHERE id = $1")
@@ -28,7 +28,7 @@ impl UserRepository for SqlxUserRepository {
 
         match user {
             Some(user) => Ok(user),
-            None => anyhow::bail!("User with id {} not found", id),
+            None => anyhow::bail!("User with ID {} not found", id),
         }
     }
 }
