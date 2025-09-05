@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use anyhow::Result;
 use async_graphql::{Context, Object, SimpleObject, ID};
 use repositories::user::UserRepository;
 
@@ -15,16 +14,20 @@ pub struct UserQuery;
 
 #[Object]
 impl UserQuery {
-    pub async fn user(&self, ctx: &Context<'_>, id: ID) -> Result<User> {
+    pub async fn user(&self, ctx: &Context<'_>, id: ID) -> async_graphql::Result<User> {
         let user_id = id
             .parse::<i32>()
-            .map_err(|_| anyhow::anyhow!("Invalid user ID format"))?;
+            .map_err(|_| async_graphql::Error::new("Invalid user ID format"))?;
 
         let repository = ctx
             .data::<Arc<dyn UserRepository>>()
-            .map_err(|_| anyhow::anyhow!("UserRepository not found in context"))?;
+            .map_err(|_| async_graphql::Error::new("UserRepository not found in context"))?;
 
-        let user = repository.fetch_by_id(user_id).await?;
+        let user = repository
+            .fetch_by_id(user_id)
+            .await
+            .map_err(|e| async_graphql::Error::new(e.to_string()))?;
+
         Ok(User {
             id: user.id.to_string(),
             name: user.name,

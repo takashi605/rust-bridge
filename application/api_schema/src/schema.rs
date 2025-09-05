@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use anyhow::Result;
 use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, SchemaBuilder, ID};
 
 use crate::queries::user::{User, UserQuery};
@@ -19,7 +18,7 @@ impl QueryRoot {
 
 #[Object]
 impl QueryRoot {
-    async fn user(&self, ctx: &Context<'_>, id: ID) -> Result<User> {
+    async fn user(&self, ctx: &Context<'_>, id: ID) -> async_graphql::Result<User> {
         self.user_query.user(ctx, id).await
     }
 }
