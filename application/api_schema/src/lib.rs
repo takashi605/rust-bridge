@@ -1,4 +1,6 @@
-mod queries;
+mod queries {
+    pub mod user;
+}
 pub mod schema;
 
 // 公開APIの再エクスポート
