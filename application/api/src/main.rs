@@ -9,7 +9,7 @@ use actix_web::{web, App, HttpServer};
 async fn main() -> anyhow::Result<()> {
     println!("Starting API server on http://0.0.0.0:8080");
 
-    let schema = helper::build_gr_schema().await?;
+    let schema = gql_schema_factory::create_schema().await?;
 
     HttpServer::new(move || {
         App::new()
@@ -28,19 +28,23 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-mod helper {
+mod gql_schema_factory {
     use anyhow::Result;
     use api_schema::{build_schema_with_context, GrSchema};
-    use repositories::{db, user::SqlxUserRepository};
+    use crate::repository_factory;
 
-    pub async fn build_gr_schema() -> Result<GrSchema> {
-        let repo = create_user_repository().await?;
-        let schema = build_schema_with_context(repo);
-
+    pub async fn create_schema() -> Result<GrSchema> {
+        let user_repository = repository_factory::create_user_repository().await?;
+        let schema = build_schema_with_context(user_repository);
         Ok(schema)
     }
+}
 
-    async fn create_user_repository() -> Result<SqlxUserRepository> {
+mod repository_factory {
+    use anyhow::Result;
+    use repositories::{db, user::SqlxUserRepository};
+
+    pub async fn create_user_repository() -> Result<SqlxUserRepository> {
         let pool = db::pool::create_connection_pool().await?;
         Ok(SqlxUserRepository::new(pool))
     }
