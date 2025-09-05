@@ -141,10 +141,13 @@ Commit splitting examples:
 1. Check staged files with `git status`
 2. If there are 0 staged files, automatically add all changed and new files with `git add`
 3. Run `git diff` to understand the changes being committed
-4. Analyze diff to determine if multiple distinct logical changes exist
-5. If multiple distinct changes are detected, suggest splitting the commit into multiple smaller commits
-6. For each commit (or single commit if not splitting), create commit message in conventional commit format with emoji
-7. Run `git branch --contains` to understand the current branch's Issue number. Include Issue number in commit message (example: ✨ feat: ブログ記事一覧画面からブログ記事編集画面へのリンクを追加 #3)
+4. **Code Review**: Use code-reviewer agent to analyze the changes for code quality, security, performance, and best practices
+   - If **critical issues** are found (security vulnerabilities, major bugs, breaking changes), stop and ask user for confirmation before committing
+   - If **minor issues** are found (style improvements, optimization suggestions), proceed with commit and provide improvement suggestions to user afterward
+5. Analyze diff to determine if multiple distinct logical changes exist
+6. If multiple distinct changes are detected, suggest splitting the commit into multiple smaller commits
+7. For each commit (or single commit if not splitting), create commit message in conventional commit format with emoji
+8. Run `git branch --contains` to understand the current branch's Issue number. Include Issue number in commit message (example: ✨ feat: ブログ記事一覧画面からブログ記事編集画面へのリンクを追加 #3)
 
 ## Important Notes
 - If specific files are already staged, the command will commit only those files
