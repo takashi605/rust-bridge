@@ -1,7 +1,6 @@
 #![recursion_limit = "512"]
 
 mod handlers;
-mod models;
 
 use actix_web::{web, App, HttpServer};
 
@@ -29,9 +28,9 @@ async fn main() -> anyhow::Result<()> {
 }
 
 mod gql_schema_factory {
+    use crate::repository_factory;
     use anyhow::Result;
     use api_schema::{build_schema_with_context, GrSchema};
-    use crate::repository_factory;
 
     pub async fn create_schema() -> Result<GrSchema> {
         let user_repository = repository_factory::create_user_repository().await?;
