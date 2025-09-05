@@ -1,5 +1,5 @@
-use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, ID};
 use anyhow::Result;
+use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, SchemaBuilder, ID};
 
 mod queries;
 use queries::user::{User, UserQuery};
@@ -25,8 +25,20 @@ impl QueryRoot {
 
 pub type GrSchema = async_graphql::Schema<QueryRoot, EmptyMutation, EmptySubscription>;
 
+pub fn build_schema_with_context<R: 'static + Send + Sync>(repository: R) -> GrSchema
+where
+    R: repositories::user::UserRepository,
+{
+    let schema = initialize_schema_builder().data(repository).finish();
+    schema
+}
+
 pub fn build_schema() -> GrSchema {
-    async_graphql::Schema::build(QueryRoot::new(), EmptyMutation, EmptySubscription).finish()
+    initialize_schema_builder().finish()
+}
+
+fn initialize_schema_builder() -> SchemaBuilder<QueryRoot, EmptyMutation, EmptySubscription> {
+    async_graphql::Schema::build(QueryRoot::new(), EmptyMutation, EmptySubscription)
 }
 
 pub fn schema_sdl() -> String {
@@ -54,5 +66,4 @@ mod tests {
         assert!(schema.contains("schema {"));
         assert!(schema.contains("query: QueryRoot"));
     }
-
 }

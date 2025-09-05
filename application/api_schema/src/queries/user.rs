@@ -1,5 +1,5 @@
-use async_graphql::{Context, Object, SimpleObject, ID};
 use anyhow::Result;
+use async_graphql::{Context, Object, SimpleObject, ID};
 use repositories::mock::user::UserRepositoryMock;
 use repositories::user::UserRepository;
 
@@ -15,9 +15,10 @@ pub struct UserQuery;
 #[Object]
 impl UserQuery {
     pub async fn user(&self, _ctx: &Context<'_>, id: ID) -> Result<User> {
-        let user_id = id.parse::<i32>()
+        let user_id = id
+            .parse::<i32>()
             .map_err(|_| anyhow::anyhow!("Invalid user ID format"))?;
-        
+
         let repository = UserRepositoryMock;
         let user = repository.fetch_by_id(user_id).await?;
         Ok(User {
@@ -30,7 +31,9 @@ impl UserQuery {
 
 #[cfg(test)]
 mod tests {
-    use crate::build_schema;
+    use repositories::mock::user::UserRepositoryMock;
+
+    use crate::build_schema_with_context;
 
     #[tokio::test]
     async fn test_fetch_user_query() {
@@ -44,10 +47,14 @@ mod tests {
             }
         "#;
 
-        let schema = build_schema();
+        let repo = UserRepositoryMock;
+        let schema = build_schema_with_context(repo);
         let resp = schema.execute(query).await;
 
-        let respond_json = resp.data.into_json().expect("Failed to convert response data to JSON");
+        let respond_json = resp
+            .data
+            .into_json()
+            .expect("Failed to convert response data to JSON");
         let expected_json = serde_json::json!({
             "user": {
                 "id": "1",
@@ -71,7 +78,8 @@ mod tests {
             }
         "#;
 
-        let schema = build_schema();
+        let repo = UserRepositoryMock;
+        let schema = build_schema_with_context(repo);
         let resp = schema.execute(query).await;
 
         assert!(resp.errors.len() > 0);
@@ -90,7 +98,8 @@ mod tests {
             }
         "#;
 
-        let schema = build_schema();
+        let repo = UserRepositoryMock;
+        let schema = build_schema_with_context(repo);
         let resp = schema.execute(query).await;
 
         assert!(resp.errors.len() > 0);
