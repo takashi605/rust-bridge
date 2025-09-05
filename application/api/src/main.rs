@@ -4,18 +4,12 @@ mod handlers;
 mod models;
 
 use actix_web::{web, App, HttpServer};
-use api_schema::build_schema_with_context;
-use repositories::db;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     println!("Starting API server on http://0.0.0.0:8080");
 
-    let pool = db::pool::create_connection_pool().await?;
-
-    let repo = repositories::user::SqlxUserRepository::new(pool);
-
-    let schema = build_schema_with_context(repo);
+    let schema = helper::build_gr_schema().await?;
 
     HttpServer::new(move || {
         App::new()
@@ -32,4 +26,22 @@ async fn main() -> anyhow::Result<()> {
     .await?;
 
     Ok(())
+}
+
+mod helper {
+    use anyhow::Result;
+    use api_schema::{build_schema_with_context, GrSchema};
+    use repositories::{db, user::SqlxUserRepository};
+
+    pub async fn build_gr_schema() -> Result<GrSchema> {
+        let repo = create_user_repository().await?;
+        let schema = build_schema_with_context(repo);
+
+        Ok(schema)
+    }
+
+    async fn create_user_repository() -> Result<SqlxUserRepository> {
+        let pool = db::pool::create_connection_pool().await?;
+        Ok(SqlxUserRepository::new(pool))
+    }
 }
