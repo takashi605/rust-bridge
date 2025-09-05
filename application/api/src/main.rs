@@ -4,7 +4,7 @@ mod handlers;
 mod models;
 
 use actix_web::{web, App, HttpServer};
-use api_schema::build_schema;
+use api_schema::build_schema_with_context;
 use repositories::db;
 
 #[tokio::main]
@@ -14,7 +14,9 @@ async fn main() -> anyhow::Result<()> {
     // データベース接続プールを作成
     let pool = db::pool::create_connection_pool().await?;
 
-    let schema = build_schema();
+    let repo = repositories::user::SqlxUserRepository::new(pool.clone());
+
+    let schema = build_schema_with_context(repo);
 
     HttpServer::new(move || {
         App::new()
