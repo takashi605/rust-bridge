@@ -1,18 +1,18 @@
 #![recursion_limit = "512"]
 
-mod db;
 mod handlers;
 mod models;
 
 use actix_web::{web, App, HttpServer};
 use api_schema::build_schema;
+use repositories::db;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     println!("Starting API server on http://0.0.0.0:8080");
 
     // データベース接続プールを作成
-    let pool = db::create_connection_pool().await?;
+    let pool = db::pool::create_connection_pool().await?;
 
     let schema = build_schema();
 
