@@ -72,20 +72,13 @@ async fn test_send_email() -> anyhow::Result<()> {
 
     let resp_json = resp.json::<serde_json::Value>().await?;
 
-    let target_message = resp_json["items"]
-        .as_array()
-        .expect("items が配列ではありません")
-        .iter()
-        .find(|item| item["Content"]["Headers"]["Message-ID"][0].as_str() == Some(&message_id))
-        .expect("指定されたMessage-IDのメッセージが見つかりません");
+    let subject = email_json_utils::find_subject_by_message_id(&resp_json, &message_id)
+        .expect("送信したメールが MailHog に見つかりません")
+        .to_string();
 
-    let subject = target_message["Content"]["Headers"]["Subject"][0]
-        .as_str()
-        .expect("Subject ヘッダが存在しません");
-
-    let line = format!("Subject : {}", subject);
+    let header_line = format!("Subject : {}", subject);
     let (parsed_subject, _) =
-        mailparse::parse_header(line.as_bytes()).expect("ヘッダのパースに失敗しました");
+        mailparse::parse_header(header_line.as_bytes()).expect("ヘッダのパースに失敗しました");
 
     assert_eq!(
         parsed_subject.get_value(),
@@ -94,4 +87,27 @@ async fn test_send_email() -> anyhow::Result<()> {
     );
 
     Ok(())
+}
+
+mod email_json_utils {
+    use serde_json::Value;
+
+    pub fn find_subject_by_message_id<'a>(
+        json: &'a serde_json::Value,
+        message_id: &str,
+    ) -> Option<&'a str> {
+        let target_message = find_item_by_message_id(json, message_id)?;
+
+        target_message["Content"]["Headers"]["Subject"][0].as_str()
+    }
+
+    pub fn find_item_by_message_id<'a>(
+        json: &'a serde_json::Value,
+        message_id: &str
+    ) -> Option<&'a Value> {
+        json["items"]
+            .as_array()?
+            .iter()
+            .find(|item| item["Content"]["Headers"]["Message-ID"][0].as_str() == Some(message_id))
+    }
 }
