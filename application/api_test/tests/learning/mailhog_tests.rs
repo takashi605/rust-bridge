@@ -98,16 +98,31 @@ mod email_json_utils {
     ) -> Option<&'a str> {
         let target_message = find_item_by_message_id(json, message_id)?;
 
-        target_message["Content"]["Headers"]["Subject"][0].as_str()
+        target_message
+            .get("Content")?
+            .get("Headers")?
+            .get("Subject")?
+            .as_array()?
+            .first()?
+            .as_str()
     }
 
     pub fn find_item_by_message_id<'a>(
         json: &'a serde_json::Value,
         message_id: &str
     ) -> Option<&'a Value> {
-        json["items"]
+        json.get("items")?
             .as_array()?
             .iter()
-            .find(|item| item["Content"]["Headers"]["Message-ID"][0].as_str() == Some(message_id))
+            .find(|item| {
+                // クロージャ内では ? 演算子が使えないため、and_then チェーンを使用
+                item.get("Content")
+                    .and_then(|content| content.get("Headers"))
+                    .and_then(|headers| headers.get("Message-ID"))
+                    .and_then(|msg_ids| msg_ids.as_array())
+                    .and_then(|ids| ids.first())
+                    .and_then(|id| id.as_str())
+                    == Some(message_id)
+            })
     }
 }
