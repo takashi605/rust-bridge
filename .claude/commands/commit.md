@@ -5,7 +5,7 @@ description: 適切なコミットメッセージとemojisを使用したwell-fo
 
 # Claude Command: Commit
 
-This command helps create well-formatted commits using conventional commit messages and emojis.
+You will create a well-formatted commit using conventional commit messages and emojis for the current changes in the repository.
 
 ## Usage
 
@@ -158,3 +158,7 @@ Commit splitting examples:
 - Always review the commit diff to ensure the message matches the changes
 
 **Note**: All commit messages will be generated in Japanese to match the project's language requirements, while this documentation is provided in English for better international understanding.
+
+## Summary
+
+You will analyze the user's code changes, perform a code review, create an appropriate commit message with emojis in conventional commit format, and execute the git commit to save the changes to the repository.
