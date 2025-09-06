@@ -12,27 +12,28 @@ use lettre::{
 
 #[async_trait]
 pub trait Mailer {
+    fn new(message: Message) -> Self;
     async fn send(&self) -> anyhow::Result<String>;
 }
 
 
-pub struct LettreMailer;
+pub struct LettreMailer {
+    message: Message,
+}
 
 #[async_trait]
 impl Mailer for LettreMailer {
+    fn new(message: Message) -> Self {
+        Self { message }
+    }
+
     async fn send(&self) -> anyhow::Result<String> {
         // --- 1) 設定の読み込み ---
         let config = MailhogConfig::load()?;
 
-        // --- 2) メール本文（プレーン/HTML の代替）---
-        let plain_body = "こんにちは！\nRust からの最初のメールです。";
-        let html_body = r#"
-            <html>
-              <body>
-                <p>こんにちは！<br/>Rust からの <b>最初のメール</b> です。</p>
-              </body>
-            </html>
-        "#;
+        // --- 2) メール本文（Message構造体のデータを使用）---
+        let plain_body = &self.message.plain_body;
+        let html_body = &self.message.html_body;
 
         // alternative(=受信側が表示可能な方を選ぶ) を組み立て
         let body = MultiPart::alternative() // text/plain と text/html の選択肢
@@ -47,13 +48,12 @@ impl Mailer for LettreMailer {
                     .body(html_body.to_string()),
             );
 
-        // --- 3) Message を作る ---
-        let message_id = uuid::Uuid::new_v4().to_string();
+        // --- 3) Message を作る（Message構造体のデータを使用）---
         let message = lettre::Message::builder()
-            .from(Mailbox::new(None, config.from_email.parse()?))
-            .to(Mailbox::new(None, config.to_email.parse()?))
+            .from(Mailbox::new(None, self.message.from_email.parse()?))
+            .to(Mailbox::new(None, self.message.to_email.parse()?))
             .subject("【テスト】Rust から最初のメール")
-            .header(header::MessageId::from(message_id.clone()))
+            .header(header::MessageId::from(self.message.message_id.clone()))
             .multipart(body)?; // ← multipart をセット
 
         // --- 4) SMTP クライアントを作る ---
@@ -64,6 +64,6 @@ impl Mailer for LettreMailer {
         // --- 5) 送信 ---
         mailer.send(message).await?;
 
-        Ok(message_id)
+        Ok(self.message.message_id.clone())
     }
 }
