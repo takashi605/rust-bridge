@@ -3,12 +3,9 @@ use std::env;
 
 use lettre::{
     message::{header, Mailbox, MultiPart, SinglePart},
-    AsyncSmtpTransport, Message, Tokio1Executor,
-    AsyncTransport,
+    AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
 };
 
-
-// TODO 以下は正確にはテストではなく、テストデータ送信関数である。メール取得テストにして送信部分を関数化予定。
 #[tokio::test]
 async fn test_send_email() -> anyhow::Result<()> {
     dotenv().ok();
@@ -16,6 +13,8 @@ async fn test_send_email() -> anyhow::Result<()> {
     // --- 1) 設定の読み込み ---
     let smtp_host = env::var("SMTP_HOST")?;
     let smtp_port: u16 = env::var("SMTP_PORT")?.parse()?;
+    let mailhog_api_host = env::var("MAILHOG_API_HOST")?;
+    let mailhog_api_port: u16 = env::var("MAILHOG_API_PORT")?.parse()?;
     let from_email = env::var("FROM_EMAIL")?;
     let to_email = env::var("TO_EMAIL")?;
 
@@ -55,8 +54,32 @@ async fn test_send_email() -> anyhow::Result<()> {
         .build();
 
     // --- 5) 送信 ---
-    let response = mailer.send(message).await?;
-    println!("Sent! server response: {:?}", response);
+    mailer.send(message).await?;
+
+    let client = reqwest::Client::new();
+
+    let resp = client
+        .get(&format!("http://{}:{}/api/v2/messages", mailhog_api_host, mailhog_api_port))
+        .query(&[("kind", "to")])
+        .query(&[("query", &to_email)])
+        .send()
+        .await?;
+    
+    let resp_json = resp.json::<serde_json::Value>().await?;
+
+    let subject = resp_json["items"][0]["Content"]["Headers"]["Subject"][0]
+        .as_str()
+        .expect("Subject ヘッダが存在しません");
+
+    let line = format!("Subject : {}", subject);
+    let (parsed_subject, _) = mailparse::parse_header(line.as_bytes())
+        .expect("ヘッダのパースに失敗しました");
+
+    assert_eq!(
+        parsed_subject.get_value(),
+        "【テスト】Rust から最初のメール",
+        "メールの件名が期待と異なります"
+    );
 
     Ok(())
 }
