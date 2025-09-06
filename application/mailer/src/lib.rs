@@ -1,16 +1,20 @@
 pub mod config;
+pub mod message;
+
+pub use message::Message;
 
 use async_trait::async_trait;
 use config::MailhogConfig;
 use lettre::{
     message::{header, Mailbox, MultiPart, SinglePart},
-    AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
+    AsyncSmtpTransport, AsyncTransport, Tokio1Executor,
 };
 
 #[async_trait]
 pub trait Mailer {
     async fn send(&self) -> anyhow::Result<String>;
 }
+
 
 pub struct LettreMailer;
 
@@ -45,7 +49,7 @@ impl Mailer for LettreMailer {
 
         // --- 3) Message を作る ---
         let message_id = uuid::Uuid::new_v4().to_string();
-        let message = Message::builder()
+        let message = lettre::Message::builder()
             .from(Mailbox::new(None, config.from_email.parse()?))
             .to(Mailbox::new(None, config.to_email.parse()?))
             .subject("【テスト】Rust から最初のメール")
