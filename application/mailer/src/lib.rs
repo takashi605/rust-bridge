@@ -54,7 +54,7 @@ impl Mailer for LettreMailer {
         let message = lettre::Message::builder()
             .from(Mailbox::new(None, self.message.from_email.parse()?))
             .to(Mailbox::new(None, self.message.to_email.parse()?))
-            .subject("【テスト】Rust から最初のメール")
+            .subject(&self.message.subject)
             .header(header::MessageId::from(self.message.message_id.clone()))
             .multipart(body)?; // ← multipart をセット
 

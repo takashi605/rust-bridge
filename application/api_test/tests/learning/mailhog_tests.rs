@@ -7,6 +7,7 @@ async fn test_send_email() -> anyhow::Result<()> {
 
     // メール用 Message を作成
     let message = Message::new(
+        "【テスト】Rust から最初のメール".to_string(),
         "これはプレーンテキストのテストメールです。".to_string(),
         "<p>これは<b>HTML</b>のテストメールです。</p>".to_string(),
         config.from_email.clone(),

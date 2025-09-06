@@ -1,4 +1,5 @@
 pub struct Message {
+    pub subject: String,
     pub plain_body: String,
     pub html_body: String,
     pub from_email: String,
@@ -8,12 +9,14 @@ pub struct Message {
 
 impl Message {
     pub fn new(
+        subject: String,
         plain_body: String,
         html_body: String,
         from_email: String,
         to_email: String,
     ) -> Self {
         Self {
+            subject,
             plain_body,
             html_body,
             from_email,
@@ -29,18 +32,21 @@ mod tests {
 
     #[test]
     fn test_message_field_access() {
+        let subject = "テストメールの件名";
         let plain_body = "プレーンテキストの本文";
         let html_body = "<p>HTMLの本文</p>";
         let from_email = "sender@example.com";
         let to_email = "receiver@example.com";
 
         let message = Message::new(
+            subject.to_string(),
             plain_body.to_string(),
             html_body.to_string(),
             from_email.to_string(),
             to_email.to_string(),
         );
 
+        assert_eq!(message.subject, subject);
         assert_eq!(message.plain_body, plain_body);
         assert_eq!(message.html_body, html_body);
         assert_eq!(message.from_email, from_email);
