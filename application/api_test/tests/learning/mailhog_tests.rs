@@ -1,6 +1,3 @@
-use dotenvy::dotenv;
-use std::env;
-
 use lettre::{
     message::{header, Mailbox, MultiPart, SinglePart},
     AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
@@ -8,15 +5,8 @@ use lettre::{
 
 #[tokio::test]
 async fn test_send_email() -> anyhow::Result<()> {
-    dotenv().ok();
-
     // --- 1) 設定の読み込み ---
-    let smtp_host = env::var("SMTP_HOST")?;
-    let smtp_port: u16 = env::var("SMTP_PORT")?.parse()?;
-    let mailhog_api_host = env::var("MAILHOG_API_HOST")?;
-    let mailhog_api_port: u16 = env::var("MAILHOG_API_PORT")?.parse()?;
-    let from_email = env::var("FROM_EMAIL")?;
-    let to_email = env::var("TO_EMAIL")?;
+    let config = config::MailhogConfig::load()?;
 
     // --- 2) メール本文（プレーン/HTML の代替）---
     let plain_body = "こんにちは！\nRust からの最初のメールです。";
@@ -44,15 +34,15 @@ async fn test_send_email() -> anyhow::Result<()> {
     // --- 3) Message を作る ---
     let message_id = uuid::Uuid::new_v4().to_string();
     let message = Message::builder()
-        .from(Mailbox::new(None, from_email.parse()?))
-        .to(Mailbox::new(None, to_email.parse()?))
+        .from(Mailbox::new(None, config.from_email.parse()?))
+        .to(Mailbox::new(None, config.to_email.parse()?))
         .subject("【テスト】Rust から最初のメール")
         .header(header::MessageId::from(message_id.clone()))
         .multipart(body)?; // ← multipart をセット
 
     // --- 4) SMTP クライアントを作る ---
-    let mailer = AsyncSmtpTransport::<Tokio1Executor>::builder_dangerous(&smtp_host) // ローカル接続用のため、TLSなし
-        .port(smtp_port)
+    let mailer = AsyncSmtpTransport::<Tokio1Executor>::builder_dangerous(&config.smtp_host) // ローカル接続用のため、TLSなし
+        .port(config.smtp_port)
         .build();
 
     // --- 5) 送信 ---
@@ -63,10 +53,10 @@ async fn test_send_email() -> anyhow::Result<()> {
     let resp = client
         .get(&format!(
             "http://{}:{}/api/v2/messages",
-            mailhog_api_host, mailhog_api_port
+            config.mailhog_api_host, config.mailhog_api_port
         ))
         .query(&[("kind", "to")])
-        .query(&[("query", &to_email)])
+        .query(&[("query", &config.to_email)])
         .send()
         .await?;
 
@@ -109,20 +99,53 @@ mod email_json_utils {
 
     pub fn find_item_by_message_id<'a>(
         json: &'a serde_json::Value,
-        message_id: &str
+        message_id: &str,
     ) -> Option<&'a Value> {
-        json.get("items")?
-            .as_array()?
-            .iter()
-            .find(|item| {
-                // クロージャ内では ? 演算子が使えないため、and_then チェーンを使用
-                item.get("Content")
-                    .and_then(|content| content.get("Headers"))
-                    .and_then(|headers| headers.get("Message-ID"))
-                    .and_then(|msg_ids| msg_ids.as_array())
-                    .and_then(|ids| ids.first())
-                    .and_then(|id| id.as_str())
-                    == Some(message_id)
+        json.get("items")?.as_array()?.iter().find(|item| {
+            // クロージャ内では ? 演算子が使えないため、and_then チェーンを使用
+            item.get("Content")
+                .and_then(|content| content.get("Headers"))
+                .and_then(|headers| headers.get("Message-ID"))
+                .and_then(|msg_ids| msg_ids.as_array())
+                .and_then(|ids| ids.first())
+                .and_then(|id| id.as_str())
+                == Some(message_id)
+        })
+    }
+}
+
+mod config {
+    use dotenvy::dotenv;
+    use std::env;
+
+    pub struct MailhogConfig {
+        pub smtp_host: String,
+        pub smtp_port: u16,
+        pub mailhog_api_host: String,
+        pub mailhog_api_port: u16,
+        pub from_email: String,
+        pub to_email: String,
+    }
+
+    impl MailhogConfig {
+        pub fn load() -> anyhow::Result<Self> {
+            dotenv().ok();
+
+            let smtp_host = env::var("SMTP_HOST")?;
+            let smtp_port: u16 = env::var("SMTP_PORT")?.parse()?;
+            let mailhog_api_host = env::var("MAILHOG_API_HOST")?;
+            let mailhog_api_port: u16 = env::var("MAILHOG_API_PORT")?.parse()?;
+            let from_email = env::var("FROM_EMAIL")?;
+            let to_email = env::var("TO_EMAIL")?;
+
+            Ok(MailhogConfig {
+                smtp_host,
+                smtp_port,
+                mailhog_api_host,
+                mailhog_api_port,
+                from_email,
+                to_email,
             })
+        }
     }
 }
