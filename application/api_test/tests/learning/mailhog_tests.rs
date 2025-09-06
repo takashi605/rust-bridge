@@ -42,10 +42,12 @@ async fn test_send_email() -> anyhow::Result<()> {
         );
 
     // --- 3) Message を作る ---
+    let message_id = uuid::Uuid::new_v4().to_string();
     let message = Message::builder()
         .from(Mailbox::new(None, from_email.parse()?))
         .to(Mailbox::new(None, to_email.parse()?))
         .subject("【テスト】Rust から最初のメール")
+        .header(header::MessageId::from(message_id.clone()))
         .multipart(body)?; // ← multipart をセット
 
     // --- 4) SMTP クライアントを作る ---
@@ -59,21 +61,31 @@ async fn test_send_email() -> anyhow::Result<()> {
     let client = reqwest::Client::new();
 
     let resp = client
-        .get(&format!("http://{}:{}/api/v2/messages", mailhog_api_host, mailhog_api_port))
+        .get(&format!(
+            "http://{}:{}/api/v2/messages",
+            mailhog_api_host, mailhog_api_port
+        ))
         .query(&[("kind", "to")])
         .query(&[("query", &to_email)])
         .send()
         .await?;
-    
+
     let resp_json = resp.json::<serde_json::Value>().await?;
 
-    let subject = resp_json["items"][0]["Content"]["Headers"]["Subject"][0]
+    let target_message = resp_json["items"]
+        .as_array()
+        .expect("items が配列ではありません")
+        .iter()
+        .find(|item| item["Content"]["Headers"]["Message-ID"][0].as_str() == Some(&message_id))
+        .expect("指定されたMessage-IDのメッセージが見つかりません");
+
+    let subject = target_message["Content"]["Headers"]["Subject"][0]
         .as_str()
         .expect("Subject ヘッダが存在しません");
 
     let line = format!("Subject : {}", subject);
-    let (parsed_subject, _) = mailparse::parse_header(line.as_bytes())
-        .expect("ヘッダのパースに失敗しました");
+    let (parsed_subject, _) =
+        mailparse::parse_header(line.as_bytes()).expect("ヘッダのパースに失敗しました");
 
     assert_eq!(
         parsed_subject.get_value(),

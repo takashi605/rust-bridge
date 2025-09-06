@@ -14,6 +14,7 @@ dotenvy = "0.15"
 mime = "0.3"
 lettre = { version = "0.11", features = ["tokio1", "tokio1-native-tls"] }
 mailparse = "0.16"
+uuid = { version = "1", features = ["v4"] }
 
 [build-dependencies]
 api_schema = { path = "../api_schema" }
