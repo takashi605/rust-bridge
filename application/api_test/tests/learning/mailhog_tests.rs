@@ -2,10 +2,10 @@ use mailer::{config::MailhogConfig, LettreMailer, Mailer, Message};
 
 #[tokio::test]
 async fn test_send_email() -> anyhow::Result<()> {
-    // --- 1) 設定の読み込み & メール送信 ---
+    // 設定の読み込み
     let config = MailhogConfig::load()?;
 
-    // Messageを作成
+    // メール用 Message を作成
     let message = Message::new(
         "これはプレーンテキストのテストメールです。".to_string(),
         "<p>これは<b>HTML</b>のテストメールです。</p>".to_string(),
@@ -14,7 +14,7 @@ async fn test_send_email() -> anyhow::Result<()> {
     );
 
     // LettreMailerインスタンスを作成してメール送信
-    let lettre_mailer = LettreMailer::new(message);
+    let lettre_mailer = LettreMailer::new(message, config.smtp_host.clone(), config.smtp_port);
     let message_id = lettre_mailer.send().await?;
 
     let client = reqwest::Client::new();
