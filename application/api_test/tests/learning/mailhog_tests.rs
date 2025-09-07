@@ -2,6 +2,7 @@ use mailer::{config::MailhogConfig, LettreMailer, Mailer, Message};
 
 #[tokio::test]
 async fn test_send_email() -> anyhow::Result<()> {
+    // --- メールを送信 ---
     // 設定の読み込み
     let config = MailhogConfig::load()?;
 
@@ -18,6 +19,7 @@ async fn test_send_email() -> anyhow::Result<()> {
     let lettre_mailer = LettreMailer::new(message, config.smtp_host.clone(), config.smtp_port);
     let message_id = lettre_mailer.send().await?;
 
+    // --- 送信したメールを取得して正しく送れていたか検証 ---
     let client = reqwest::Client::new();
 
     let resp = client
@@ -33,15 +35,10 @@ async fn test_send_email() -> anyhow::Result<()> {
     let resp_json = resp.json::<serde_json::Value>().await?;
 
     let subject = email_json_utils::find_subject_by_message_id(&resp_json, &message_id)
-        .expect("送信したメールが MailHog に見つかりません")
-        .to_string();
-
-    let header_line = format!("Subject : {}", subject);
-    let (parsed_subject, _) =
-        mailparse::parse_header(header_line.as_bytes()).expect("ヘッダのパースに失敗しました");
+        .expect("送信したメールが MailHog に見つかりません");
 
     assert_eq!(
-        parsed_subject.get_value(),
+        subject,
         "【テスト】Rust から最初のメール",
         "メールの件名が期待と異なります"
     );
@@ -52,19 +49,24 @@ async fn test_send_email() -> anyhow::Result<()> {
 mod email_json_utils {
     use serde_json::Value;
 
-    pub fn find_subject_by_message_id<'a>(
-        json: &'a serde_json::Value,
+    pub fn find_subject_by_message_id(
+        json: &serde_json::Value,
         message_id: &str,
-    ) -> Option<&'a str> {
+    ) -> Option<String> {
         let target_message = find_item_by_message_id(json, message_id)?;
 
-        target_message
+        let raw_subject = target_message
             .get("Content")?
             .get("Headers")?
             .get("Subject")?
             .as_array()?
             .first()?
-            .as_str()
+            .as_str()?;
+
+        // mailparseを使用してヘッダを解析し、パースされた件名を返す
+        let header_line = format!("Subject: {}", raw_subject);
+        let (parsed_header, _) = mailparse::parse_header(header_line.as_bytes()).ok()?;
+        Some(parsed_header.get_value())
     }
 
     pub fn find_item_by_message_id<'a>(
