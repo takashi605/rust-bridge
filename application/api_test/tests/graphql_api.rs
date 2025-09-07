@@ -1,6 +1,6 @@
 #[tokio::test]
 async fn test_fetch_user() {
-    use api_test::graphql::cynic_queries::fetch_user::{FetchUser, FetchUserVars};
+    use api_test::test_helpers::graphql::cynic_queries::fetch_user::{FetchUser, FetchUserVars};
     use cynic::{http::ReqwestExt, QueryBuilder};
 
     let operation = FetchUser::build(FetchUserVars {

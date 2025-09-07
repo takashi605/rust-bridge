@@ -4,4 +4,5 @@ mod learning {
         mod structured;
     }
     mod rest_api_test;
+    mod mailhog_tests;
 }
