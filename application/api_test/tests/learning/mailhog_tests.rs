@@ -35,11 +35,16 @@ async fn test_send_email() -> anyhow::Result<()> {
     let resp_json = resp.json::<serde_json::Value>().await?;
 
     let subject = email_json_utils::find_subject_by_message_id(&resp_json, &message_id)
-        .expect("送信したメールが MailHog に見つかりません");
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "送信したメールがMailHogに見つかりません。\nMessage-ID: {}\nMailHog Response: {}",
+                message_id,
+                serde_json::to_string_pretty(&resp_json).unwrap_or_default()
+            )
+        })?;
 
     assert_eq!(
-        subject,
-        "【テスト】Rust から最初のメール",
+        subject, "【テスト】Rust から最初のメール",
         "メールの件名が期待と異なります"
     );
 
