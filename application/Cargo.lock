@@ -342,6 +342,7 @@ dependencies = [
  "api_schema",
  "async-graphql",
  "async-graphql-actix-web",
+ "async-trait",
  "chrono",
  "repositories",
  "serde",
