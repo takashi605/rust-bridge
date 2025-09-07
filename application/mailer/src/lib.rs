@@ -1,9 +1,7 @@
 pub mod config;
 pub mod message;
-pub mod value_object;
 
-pub use message::Message;
-pub use value_object::MessageIdVO;
+pub use message::{Message, MessageIdVO};
 
 use async_trait::async_trait;
 use lettre::{

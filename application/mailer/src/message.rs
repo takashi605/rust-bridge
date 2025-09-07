@@ -1,4 +1,8 @@
-use crate::value_object::MessageIdVO;
+pub mod message_id;
+
+pub use message_id::MessageIdVO;
+
+use crate::message::MessageIdVO as MessageId;
 
 pub struct Message {
     pub subject: String,
@@ -6,7 +10,7 @@ pub struct Message {
     pub html_body: String,
     pub from_email: String,
     pub to_email: String,
-    pub message_id: MessageIdVO,
+    pub message_id: MessageId,
 }
 
 impl Message {
@@ -23,7 +27,7 @@ impl Message {
             html_body,
             from_email,
             to_email,
-            message_id: MessageIdVO::new_uuid_v4(),
+            message_id: MessageId::new_uuid_v4(),
         }
     }
 }
