@@ -370,7 +370,6 @@ dependencies = [
  "cynic",
  "cynic-codegen",
  "dotenvy",
- "lettre",
  "mailer",
  "mailparse",
  "mime",
@@ -378,7 +377,6 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
- "uuid",
 ]
 
 [[package]]
