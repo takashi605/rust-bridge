@@ -1,10 +1,12 @@
+use crate::value_object::MessageIdVO;
+
 pub struct Message {
     pub subject: String,
     pub plain_body: String,
     pub html_body: String,
     pub from_email: String,
     pub to_email: String,
-    pub message_id: String,
+    pub message_id: MessageIdVO,
 }
 
 impl Message {
@@ -21,7 +23,7 @@ impl Message {
             html_body,
             from_email,
             to_email,
-            message_id: uuid::Uuid::new_v4().to_string(),
+            message_id: MessageIdVO::new_uuid_v4(),
         }
     }
 }
@@ -51,15 +53,11 @@ mod tests {
         assert_eq!(message.html_body, html_body);
         assert_eq!(message.from_email, from_email);
         assert_eq!(message.to_email, to_email);
-        assert!(!message.message_id.is_empty());
-        
-        // id の詳細検証
-        // UUIDとしてパース可能であることを確認
-        let parsed_uuid = uuid::Uuid::parse_str(&message.message_id);
-        assert!(parsed_uuid.is_ok(), "message_id should be a valid UUID");
-        
-        // パースしたUUIDがVersion 4であることを確認
-        let uuid = parsed_uuid.expect("Failed to parse UUID");
-        assert_eq!(uuid.get_version_num(), 4, "message_id should be UUIDv4");
+        // MessageIdVOに変更されたため、内部のUUIDを確認
+        assert_eq!(
+            message.message_id.as_inner().get_version_num(),
+            4,
+            "message_id should contain UUIDv4"
+        );
     }
 }

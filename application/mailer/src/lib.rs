@@ -1,7 +1,9 @@
 pub mod config;
 pub mod message;
+pub mod value_object;
 
 pub use message::Message;
+pub use value_object::MessageIdVO;
 
 use async_trait::async_trait;
 use lettre::{
@@ -15,7 +17,6 @@ pub trait Mailer {
     async fn send(&self) -> anyhow::Result<String>;
 }
 
-
 pub struct LettreMailer {
     message: Message,
     smtp_host: String,
@@ -25,7 +26,7 @@ pub struct LettreMailer {
 #[async_trait]
 impl Mailer for LettreMailer {
     fn new(message: Message, smtp_host: String, smtp_port: u16) -> Self {
-        Self { 
+        Self {
             message,
             smtp_host,
             smtp_port,
@@ -47,7 +48,7 @@ impl Mailer for LettreMailer {
         // --- 送信 ---
         mailer.send(message).await?;
 
-        Ok(self.message.message_id.clone())
+        Ok(self.message.message_id.to_string())
     }
 }
 
@@ -78,7 +79,7 @@ impl LettreMailer {
             .from(Mailbox::new(None, self.message.from_email.parse()?))
             .to(Mailbox::new(None, self.message.to_email.parse()?))
             .subject(&self.message.subject)
-            .header(header::MessageId::from(self.message.message_id.clone()))
+            .header(header::MessageId::from(self.message.message_id.to_string()))
             .multipart(body)
             .map_err(Into::into)
     }
