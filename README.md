@@ -1,1 +1,1 @@
-# code-first-graphql-api
+# rust-bridge

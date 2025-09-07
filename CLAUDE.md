@@ -1,5 +1,5 @@
 # このリポジトリについて
-GraphQL の学習用リポジトリです。
+Bridge パターンの学習用リポジトリです。
 Rust を用いて、GraphQL API を作成します。これは API テスト駆動で作ります。
 
 重要：ClaudeCodeAIAgent は、プロジェクトの基盤のみを作成してください。学習用リポジトリのため、基本的なコードは私が書いていきます。
@@ -26,25 +26,35 @@ Rust を用いて、GraphQL API を作成します。これは API テスト駆�
 
 ## ディレクトリ構成
 ```
-api-request-builder(root)/
+rust-bridge(root)/
 ├ containers/
 │   ├ api/
 │   │ └ Dockerfile
-│   └ api-test/
-│      └ Dockerfile
+│   ├ api-test/
+│   │ └ Dockerfile
 │   └ db/
-│      └ Dockerfile
-├ application/
+│     ├ Dockerfile
+│     └ init/
+│       ├ 01_create_tables.sql
+│       └ 02_insert_test_data.sql
+├ application/           # Workspaceルート
+│   ├ Cargo.toml        # Workspaceメンバー設定
+│   ├ Cargo.lock
+│   └ bacon.toml
 ├ compose.yaml
-└ Makefile
+├ Makefile
+├ CLAUDE.md
+└ README.md
 ```
 
 ## クレートの構成
 ```
 application/
-├ api_schema/
-├ api/
-└ api_test/
+├ api_schema/           # GraphQLスキーマ定義
+├ api/                  # GraphQL APIサーバー
+├ api_test/             # APIテストクレート
+├ repositories/         # データアクセス層（新規追加）
+└ mailer/              # メール送信機能（新規追加）
 ```
 
 ### api_schema クレート
@@ -59,14 +69,39 @@ application/
   - actix-web
   - tokio
 
-### api-test クレート
+### api_test クレート
 - api クレートで立ち上げたサーバーに対して api テストを実行する
 - [https://countries.trevorblades.com](https://countries.trevorblades.com/) に対する api テストを書き、基本的な GraphQL リクエストの方法を学ぶ
+- MailHogを使用したメール送信のテストも含む
 - 主要な依存クレートは以下
   - anyhow
   - cynic
   - reqwest
   - tokio
+
+### repositories クレート（新規追加）
+- データアクセス層を提供するクレート
+- PostgreSQLとの接続とCRUD操作を担当
+- モックとリアルな実装の両方を提供
+- 主要な依存クレートは以下
+  - anyhow
+  - tokio
+  - serde
+  - sqlx（PostgreSQL接続）
+  - async-trait
+
+### mailer クレート（新規追加）
+- メール送信機能を提供するクレート
+- SMTPサーバーを通じたメール送信
+- テスト環境ではMailHogとの連携
+- 主要な依存クレートは以下
+  - lettre（SMTP送信）
+  - anyhow
+  - uuid（メッセージID生成）
+  - tokio
+  - html-escape
+  - async-trait
+  - dotenvy（環境変数管理）
 
 ## コンテナサービス
 ### api サービス
