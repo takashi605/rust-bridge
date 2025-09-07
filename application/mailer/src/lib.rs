@@ -11,32 +11,30 @@ use lettre::{
 
 #[async_trait]
 pub trait Mailer {
-    fn new(message: Message, smtp_host: String, smtp_port: u16) -> Self;
-    async fn send(&self) -> anyhow::Result<String>;
+    fn new(smtp_host: String, smtp_port: u16) -> Self;
+    async fn send(&self, message: Message) -> anyhow::Result<String>;
 }
 
 pub struct LettreMailer {
-    message: Message,
     smtp_host: String,
     smtp_port: u16,
 }
 
 #[async_trait]
 impl Mailer for LettreMailer {
-    fn new(message: Message, smtp_host: String, smtp_port: u16) -> Self {
+    fn new(smtp_host: String, smtp_port: u16) -> Self {
         Self {
-            message,
             smtp_host,
             smtp_port,
         }
     }
 
-    async fn send(&self) -> anyhow::Result<String> {
+    async fn send(&self, message: Message) -> anyhow::Result<String> {
         // --- MultiPart ボディの生成 ---
-        let body = self.generate_lettre_multipart();
+        let body = self.generate_lettre_multipart(&message);
 
         // --- Lettre メッセージの生成 ---
-        let message = self.generate_lettre_message(body)?;
+        let lettre_message = self.generate_lettre_message(&message, body)?;
 
         // --- SMTP クライアントを作る ---
         let mailer = AsyncSmtpTransport::<Tokio1Executor>::builder_dangerous(&self.smtp_host) // ローカル接続用のため、TLSなし
@@ -44,18 +42,18 @@ impl Mailer for LettreMailer {
             .build();
 
         // --- 送信 ---
-        mailer.send(message).await?;
+        mailer.send(lettre_message).await?;
 
-        Ok(self.message.message_id.to_string())
+        Ok(message.message_id.to_string())
     }
 }
 
 impl LettreMailer {
     /// MultiPart ボディを生成するプライベートメソッド
     /// text/plain と text/html の alternative を組み立てます
-    fn generate_lettre_multipart(&self) -> MultiPart {
-        let plain_body = &self.message.plain_body;
-        let html_body = &self.message.html_body;
+    fn generate_lettre_multipart(&self, message: &Message) -> MultiPart {
+        let plain_body = &message.plain_body;
+        let html_body = &message.html_body;
 
         MultiPart::alternative() // text/plain と text/html の選択肢
             .singlepart(
@@ -72,12 +70,12 @@ impl LettreMailer {
 
     /// Lettre メッセージを生成するプライベートメソッド
     /// Message構造体のデータを使用してlettre::Messageを構築します
-    fn generate_lettre_message(&self, body: MultiPart) -> anyhow::Result<lettre::Message> {
+    fn generate_lettre_message(&self, message: &Message, body: MultiPart) -> anyhow::Result<lettre::Message> {
         lettre::Message::builder()
-            .from(Mailbox::new(None, self.message.from_email.parse()?))
-            .to(Mailbox::new(None, self.message.to_email.parse()?))
-            .subject(&self.message.subject)
-            .header(header::MessageId::from(self.message.message_id.to_string()))
+            .from(Mailbox::new(None, message.from_email.parse()?))
+            .to(Mailbox::new(None, message.to_email.parse()?))
+            .subject(&message.subject)
+            .header(header::MessageId::from(message.message_id.to_string()))
             .multipart(body)
             .map_err(Into::into)
     }

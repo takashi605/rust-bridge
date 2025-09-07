@@ -16,8 +16,8 @@ async fn test_send_email() -> anyhow::Result<()> {
     );
 
     // LettreMailerインスタンスを作成してメール送信
-    let lettre_mailer = LettreMailer::new(message, config.smtp_host.clone(), config.smtp_port);
-    let message_id = lettre_mailer.send().await?;
+    let lettre_mailer = LettreMailer::new(config.smtp_host.clone(), config.smtp_port);
+    let message_id = lettre_mailer.send(message).await?;
 
     // --- 送信したメールを取得して正しく送れていたか検証 ---
     let client = reqwest::Client::new();
