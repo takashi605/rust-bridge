@@ -4,22 +4,19 @@ mod notice;
 use crate::domain::notifier::notice::Notice;
 use anyhow::Result;
 
-struct Notifier;
+struct Notifier<T: message_sender::MessageSender> {
+    message_sender: T,
+}
 
-impl Notifier {
-    pub fn new() -> Self {
-        Self
+impl<T: message_sender::MessageSender> Notifier<T> {
+    pub fn new(message_sender: T) -> Self {
+        Self { message_sender }
     }
 
-    pub fn notify(&self, recipient: String, notice: Notice) -> Result<()> {
-        // TODO ここで実際の通知ロジックを実装
-        // 例えば、メール送信やログ出力など。
+    pub async fn notify(&self, recipient: String, notice: Notice) -> Result<()> {
         let Notice { subject, message } = &notice;
 
-        println!(
-            "Notifying {} with subject: {} and message: {}",
-            recipient, subject, message
-        );
+        self.message_sender.send(recipient, notice).await?;
         Ok(())
     }
 }
@@ -29,14 +26,26 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_notify_message() {
-        let notifier = Notifier::new();
-
+    #[tokio::test]
+    async fn test_notify_message() {
         let recipient = "User1".to_string();
         let notice = Notice::new("Test Notice".into(), "This is a test notice.".into());
 
-        let result = notifier.notify(recipient, notice);
+        let mut message_sender = message_sender::MockMessageSender::new();
+
+        // notifier.notify の内部で呼ばれる send メソッドのモック設定
+        message_sender
+            .expect_send()
+            .with(
+                mockall::predicate::eq(recipient.clone()),
+                mockall::predicate::eq(notice.clone()),
+            )
+            .times(1)
+            .returning(|_, _| Ok(()));
+
+        let notifier = Notifier::new(message_sender);
+
+        let result = notifier.notify(recipient, notice).await;
         assert!(result.is_ok());
     }
 }
