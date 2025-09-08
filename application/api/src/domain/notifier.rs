@@ -1,5 +1,8 @@
 mod message_sender;
 mod notice;
+mod mocks {
+    mod message_sender_mock;
+}
 
 use crate::domain::notifier::notice::Notice;
 use anyhow::Result;
