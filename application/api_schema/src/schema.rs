@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
-use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, SchemaBuilder, ID};
+use async_graphql::{Context, EmptySubscription, Object, SchemaBuilder, ID};
 
 use crate::queries::user::{User, UserQuery};
+use crate::mutations::notice::{NoticeMutation, NoticeInput, SendEmailPayload};
 
 pub struct QueryRoot {
     user_query: UserQuery,
@@ -23,7 +24,26 @@ impl QueryRoot {
     }
 }
 
-pub type GrSchema = async_graphql::Schema<QueryRoot, EmptyMutation, EmptySubscription>;
+pub struct MutationRoot {
+    notice_mutation: NoticeMutation,
+}
+
+impl MutationRoot {
+    pub fn new() -> Self {
+        Self {
+            notice_mutation: NoticeMutation,
+        }
+    }
+}
+
+#[Object]
+impl MutationRoot {
+    async fn notify(&self, ctx: &Context<'_>, recipient: String, notice: NoticeInput) -> async_graphql::Result<SendEmailPayload> {
+        self.notice_mutation.notify(ctx, recipient, notice).await
+    }
+}
+
+pub type GrSchema = async_graphql::Schema<QueryRoot, MutationRoot, EmptySubscription>;
 
 pub fn build_schema_with_context<R: 'static + Send + Sync>(repository: R) -> GrSchema
 where
@@ -38,8 +58,8 @@ pub fn build_schema() -> GrSchema {
     initialize_schema_builder().finish()
 }
 
-fn initialize_schema_builder() -> SchemaBuilder<QueryRoot, EmptyMutation, EmptySubscription> {
-    async_graphql::Schema::build(QueryRoot::new(), EmptyMutation, EmptySubscription)
+fn initialize_schema_builder() -> SchemaBuilder<QueryRoot, MutationRoot, EmptySubscription> {
+    async_graphql::Schema::build(QueryRoot::new(), MutationRoot::new(), EmptySubscription)
 }
 
 pub fn schema_sdl() -> String {

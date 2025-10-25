@@ -1,3 +1,6 @@
+#[path = "graphql_api/notice.rs"]
+mod notice;
+
 #[tokio::test]
 async fn test_fetch_user() {
     use api_test::test_helpers::graphql::cynic_queries::fetch_user::{FetchUser, FetchUserVars};

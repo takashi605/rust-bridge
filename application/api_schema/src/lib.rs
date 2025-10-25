@@ -1,6 +1,9 @@
 mod queries {
     pub mod user;
 }
+mod mutations {
+    pub mod notice;
+}
 pub mod schema;
 
 // 公開APIの再エクスポート

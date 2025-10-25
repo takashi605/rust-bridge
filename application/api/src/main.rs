@@ -1,8 +1,8 @@
 #![recursion_limit = "512"]
 
 mod handlers;
-mod domain {
-    mod notifier;
+pub mod domain {
+    pub mod notifier;
 }
 
 use actix_web::{web, App, HttpServer};
