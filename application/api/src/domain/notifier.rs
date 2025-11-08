@@ -14,8 +14,6 @@ impl<T: message_sender::MessageSender> Notifier<T> {
     }
 
     pub async fn notify(&self, recipient: String, notice: Notice) -> Result<()> {
-        let Notice { subject, message } = &notice;
-
         self.message_sender.send(recipient, notice).await?;
         Ok(())
     }

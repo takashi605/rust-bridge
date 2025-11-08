@@ -16,9 +16,8 @@ impl<M: Mailer> EmailSender<M> {
     }
 
     fn notice_to_message(&self, recipient: String, notice: Notice) -> Message {
-        // TODO: HTML変換を後で改善する
         let plain_body = notice.message.clone();
-        let html_body = notice.message.clone(); // 暫定的に同じ内容
+        let html_body = format!("<p>{}</p>", html_escape::encode_text(&notice.message));
 
         Message::new(
             notice.subject,
@@ -45,9 +44,24 @@ mod tests {
     use crate::domain::notifier::notice::Notice;
     use mailer::Message;
 
+    use std::sync::{Arc, Mutex};
+
+    // キャプチャされたメッセージのフィールド
+    #[derive(Clone, Debug)]
+    #[allow(dead_code)]
+    struct CapturedMessage {
+        subject: String,
+        plain_body: String,
+        html_body: String,
+        from_email: String,
+        to_email: String,
+    }
+
     // テスト用のモックMailer
+    #[derive(Clone)]
     struct MockMailer {
         expected_message_id: String,
+        captured_message: Arc<Mutex<Option<CapturedMessage>>>,
     }
 
     #[async_trait]
@@ -56,7 +70,14 @@ mod tests {
             unimplemented!("Not used in tests")
         }
 
-        async fn send(&self, _message: Message) -> anyhow::Result<String> {
+        async fn send(&self, message: Message) -> anyhow::Result<String> {
+            *self.captured_message.lock().unwrap() = Some(CapturedMessage {
+                subject: message.subject,
+                plain_body: message.plain_body,
+                html_body: message.html_body,
+                from_email: message.from_email,
+                to_email: message.to_email,
+            });
             Ok(self.expected_message_id.clone())
         }
     }
@@ -65,7 +86,12 @@ mod tests {
         fn new_with_message_id(message_id: String) -> Self {
             Self {
                 expected_message_id: message_id,
+                captured_message: Arc::new(Mutex::new(None)),
             }
+        }
+
+        fn get_captured_message(&self) -> Option<CapturedMessage> {
+            self.captured_message.lock().unwrap().clone()
         }
     }
 
@@ -78,9 +104,54 @@ mod tests {
         let recipient = "test@example.com".to_string();
         let notice = Notice::new("Test Subject".into(), "Test Message".into());
 
-        // email_senderがMessageSenderを実装していることを確認
-        // この行でコンパイルエラーが出るはず（MessageSenderが未実装）
         let result = email_sender.send(recipient, notice).await;
         assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_html_conversion_escapes_special_characters() {
+        let from_email = "noreply@example.com".to_string();
+        let mock_mailer = MockMailer::new_with_message_id("test-message-id".to_string());
+        let email_sender = EmailSender::new(mock_mailer.clone(), from_email);
+
+        let recipient = "test@example.com".to_string();
+        let notice = Notice::new(
+            "Test <Subject>".into(),
+            "Message with <tags> & special chars".into(),
+        );
+
+        let result = email_sender.send(recipient.clone(), notice).await;
+        assert!(result.is_ok());
+
+        // 送信されたMessageを取得
+        let message = mock_mailer.get_captured_message().expect("Message should be captured");
+
+        // HTMLボディに特殊文字がエスケープされていることを確認
+        assert!(message.html_body.contains("&lt;tags&gt;"));
+        assert!(message.html_body.contains("&amp;"));
+        assert!(!message.html_body.contains("<tags>"), "HTML should be escaped");
+
+        // プレーンテキストボディは変更されていないことを確認
+        assert_eq!(message.plain_body, "Message with <tags> & special chars");
+    }
+
+    #[tokio::test]
+    async fn test_html_conversion_generates_valid_html() {
+        let from_email = "noreply@example.com".to_string();
+        let mock_mailer = MockMailer::new_with_message_id("test-message-id".to_string());
+        let email_sender = EmailSender::new(mock_mailer.clone(), from_email);
+
+        let recipient = "test@example.com".to_string();
+        let notice = Notice::new("Subject".into(), "Simple message".into());
+
+        let result = email_sender.send(recipient, notice).await;
+        assert!(result.is_ok());
+
+        let message = mock_mailer.get_captured_message().expect("Message should be captured");
+
+        // HTMLボディが基本的なHTML構造を持つことを確認
+        assert!(message.html_body.contains("<p>"));
+        assert!(message.html_body.contains("</p>"));
+        assert!(message.html_body.contains("Simple message"));
     }
 }
