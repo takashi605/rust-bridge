@@ -1,6 +1,9 @@
 #![recursion_limit = "512"]
 
 mod handlers;
+mod adapters {
+    pub mod email_sender;
+}
 pub mod domain {
     pub mod notifier;
 }

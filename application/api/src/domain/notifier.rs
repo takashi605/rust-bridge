@@ -1,5 +1,5 @@
-mod message_sender;
-mod notice;
+pub mod message_sender;
+pub mod notice;
 
 use crate::domain::notifier::notice::Notice;
 use anyhow::Result;

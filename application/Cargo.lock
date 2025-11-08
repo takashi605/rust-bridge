@@ -350,6 +350,8 @@ dependencies = [
  "async-graphql-actix-web",
  "async-trait",
  "chrono",
+ "html-escape",
+ "mailer",
  "mockall",
  "repositories",
  "serde",
