@@ -66,10 +66,6 @@ mod tests {
 
     #[async_trait]
     impl Mailer for MockMailer {
-        fn new(_smtp_host: String, _smtp_port: u16) -> Self {
-            unimplemented!("Not used in tests")
-        }
-
         async fn send(&self, message: Message) -> anyhow::Result<String> {
             *self.captured_message.lock()
                 .expect("Failed to lock captured_message in test MockMailer") = Some(CapturedMessage {
