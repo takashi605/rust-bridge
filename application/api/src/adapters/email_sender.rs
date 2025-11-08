@@ -71,7 +71,8 @@ mod tests {
         }
 
         async fn send(&self, message: Message) -> anyhow::Result<String> {
-            *self.captured_message.lock().unwrap() = Some(CapturedMessage {
+            *self.captured_message.lock()
+                .expect("Failed to lock captured_message in test MockMailer") = Some(CapturedMessage {
                 subject: message.subject,
                 plain_body: message.plain_body,
                 html_body: message.html_body,
@@ -91,7 +92,9 @@ mod tests {
         }
 
         fn get_captured_message(&self) -> Option<CapturedMessage> {
-            self.captured_message.lock().unwrap().clone()
+            self.captured_message.lock()
+                .expect("Failed to lock captured_message in test MockMailer")
+                .clone()
         }
     }
 
@@ -153,5 +156,106 @@ mod tests {
         assert!(message.html_body.contains("<p>"));
         assert!(message.html_body.contains("</p>"));
         assert!(message.html_body.contains("Simple message"));
+    }
+
+    #[tokio::test]
+    async fn test_html_conversion_handles_empty_strings() {
+        let from_email = "noreply@example.com".to_string();
+        let mock_mailer = MockMailer::new_with_message_id("test-message-id".to_string());
+        let email_sender = EmailSender::new(mock_mailer.clone(), from_email);
+
+        let recipient = "test@example.com".to_string();
+        let notice = Notice::new("".into(), "".into());
+
+        let result = email_sender.send(recipient, notice).await;
+        assert!(result.is_ok());
+
+        let message = mock_mailer.get_captured_message().expect("Message should be captured");
+
+        // 空文字列でも正しいHTML構造を持つことを確認
+        assert_eq!(message.html_body, "<p></p>");
+        assert_eq!(message.plain_body, "");
+    }
+
+    #[tokio::test]
+    async fn test_html_conversion_handles_script_injection() {
+        let from_email = "noreply@example.com".to_string();
+        let mock_mailer = MockMailer::new_with_message_id("test-message-id".to_string());
+        let email_sender = EmailSender::new(mock_mailer.clone(), from_email);
+
+        let recipient = "test@example.com".to_string();
+        let notice = Notice::new(
+            "Alert".into(),
+            "<script>alert('XSS')</script>".into(),
+        );
+
+        let result = email_sender.send(recipient, notice).await;
+        assert!(result.is_ok());
+
+        let message = mock_mailer.get_captured_message().expect("Message should be captured");
+
+        // スクリプトタグが完全にエスケープされていることを確認
+        assert!(!message.html_body.contains("<script>"));
+        assert!(message.html_body.contains("&lt;script&gt;"));
+        assert!(message.html_body.contains("&lt;/script&gt;"));
+        assert!(message.html_body.contains("alert"));
+
+        // プレーンテキストボディは変更されていないことを確認
+        assert_eq!(message.plain_body, "<script>alert('XSS')</script>");
+    }
+
+    #[tokio::test]
+    async fn test_html_conversion_handles_unicode_characters() {
+        let from_email = "noreply@example.com".to_string();
+        let mock_mailer = MockMailer::new_with_message_id("test-message-id".to_string());
+        let email_sender = EmailSender::new(mock_mailer.clone(), from_email);
+
+        let recipient = "test@example.com".to_string();
+        let notice = Notice::new(
+            "日本語件名".into(),
+            "日本語テスト 🎉 emoji test".into(),
+        );
+
+        let result = email_sender.send(recipient, notice).await;
+        assert!(result.is_ok());
+
+        let message = mock_mailer.get_captured_message().expect("Message should be captured");
+
+        // Unicode文字が正しく処理されることを確認
+        assert!(message.html_body.contains("日本語テスト"));
+        assert!(message.html_body.contains("🎉"));
+        assert!(message.html_body.contains("emoji test"));
+        assert!(message.html_body.contains("<p>"));
+        assert!(message.html_body.contains("</p>"));
+
+        // プレーンテキストボディは変更されていないことを確認
+        assert_eq!(message.plain_body, "日本語テスト 🎉 emoji test");
+    }
+
+    #[tokio::test]
+    async fn test_html_conversion_handles_newlines() {
+        let from_email = "noreply@example.com".to_string();
+        let mock_mailer = MockMailer::new_with_message_id("test-message-id".to_string());
+        let email_sender = EmailSender::new(mock_mailer.clone(), from_email);
+
+        let recipient = "test@example.com".to_string();
+        let notice = Notice::new(
+            "Multi-line".into(),
+            "Line 1\nLine 2\r\nLine 3".into(),
+        );
+
+        let result = email_sender.send(recipient, notice).await;
+        assert!(result.is_ok());
+
+        let message = mock_mailer.get_captured_message().expect("Message should be captured");
+
+        // 改行文字が保持されることを確認
+        assert!(message.html_body.contains("Line 1"));
+        assert!(message.html_body.contains("Line 2"));
+        assert!(message.html_body.contains("Line 3"));
+        assert!(message.html_body.contains("\n") || message.html_body.contains("\r\n"));
+
+        // プレーンテキストボディは変更されていないことを確認
+        assert_eq!(message.plain_body, "Line 1\nLine 2\r\nLine 3");
     }
 }
