@@ -345,7 +345,6 @@ version = "0.1.0"
 dependencies = [
  "actix-web",
  "anyhow",
- "api_schema",
  "async-graphql",
  "async-graphql-actix-web",
  "async-trait",

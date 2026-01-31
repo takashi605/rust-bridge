@@ -5,6 +5,7 @@ mod adapters {
 pub mod domain {
     pub mod notifier;
 }
+pub mod schema;
 
 use actix_web::{web, App, HttpServer};
 
@@ -33,7 +34,7 @@ pub async fn run_server() -> anyhow::Result<()> {
 mod gql_schema_factory {
     use crate::repository_factory;
     use anyhow::Result;
-    use api_schema::{build_schema_with_context, GrSchema};
+    use crate::schema::{build_schema_with_context, GrSchema};
 
     pub async fn create_schema() -> Result<GrSchema> {
         let user_repository = repository_factory::create_user_repository().await?;

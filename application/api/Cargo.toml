@@ -6,7 +6,6 @@ edition = "2021"
 [dependencies]
 actix-web = "4.0"
 anyhow = "1.0"
-api_schema = { path = "../api_schema" }
 async-trait = "0.1"
 async-graphql = "7"
 async-graphql-actix-web = "7"
