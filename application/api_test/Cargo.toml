@@ -16,7 +16,7 @@ mailparse = "0.16"
 mailer = { path = "../mailer" }
 
 [build-dependencies]
-api_schema = { path = "../api_schema" }
+api = { path = "../api" }
 cynic-codegen = "3.12"
 
 [dev-dependencies]

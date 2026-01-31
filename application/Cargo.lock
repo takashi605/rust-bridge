@@ -375,7 +375,7 @@ name = "api_test"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "api_schema",
+ "api",
  "cynic",
  "cynic-codegen",
  "dotenvy",
