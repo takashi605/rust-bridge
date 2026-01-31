@@ -4,7 +4,7 @@ pub mod notice;
 use crate::domain::notifier::notice::Notice;
 use anyhow::Result;
 
-struct Notifier<T: message_sender::MessageSender> {
+pub struct Notifier<T: message_sender::MessageSender> {
     message_sender: T,
 }
 

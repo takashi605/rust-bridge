@@ -1,4 +1,10 @@
 use async_graphql::{Context, InputObject, Object, SimpleObject};
+use mailer::{config::MailhogConfig, LettreMailer};
+
+use crate::{
+    adapters::email_sender::{self, EmailSender},
+    domain::{self, notifier::{self, Notifier}},
+};
 
 #[derive(InputObject)]
 pub struct NoticeInput {
@@ -28,8 +34,16 @@ impl NoticeMutation {
         recipient: String,
         notice: NoticeInput,
     ) -> async_graphql::Result<SendEmailPayload> {
-        // TODO: 後で本実装に置き換える（Notifierを呼び出してメール送信）
-        // ダミー実装: 受け取った値をそのまま返す
+        let notice = notifier::notice::Notice::new(notice.subject, notice.message);
+
+        let config = MailhogConfig::load()?;
+        let mailer = LettreMailer::new(config.smtp_host, config.smtp_port);
+        let email_sender = EmailSender::new(mailer, config.from_email);
+
+        let notifier = Notifier::new(email_sender);
+
+        notifier.notify(recipient.clone(), notice.clone()).await?;
+
         Ok(SendEmailPayload {
             recipient,
             notice: Notice {

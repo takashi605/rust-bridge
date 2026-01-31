@@ -26,4 +26,6 @@ async fn test_notify_mutation() {
     assert_eq!(data.notify.recipient, "test@example.com");
     assert_eq!(data.notify.notice.subject, "Test Subject");
     assert_eq!(data.notify.notice.message, "Test Message");
+
+    // TODO: メールが実際に送信されたかどうかをMailHogのAPIなどで確認する
 }

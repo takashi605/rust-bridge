@@ -1,5 +1,4 @@
-#[cfg_attr(test, derive(Clone))]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Notice {
     pub subject: String,
     pub message: String,
