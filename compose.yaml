@@ -29,8 +29,6 @@ services:
         consistency: cached
     networks:
       - api-network
-    profiles:
-      - test
     depends_on:
       api:
         condition: service_healthy

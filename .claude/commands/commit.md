@@ -15,6 +15,12 @@ To create a commit, simply enter:
 /commit
 ```
 
+To skip the code review and create a commit directly:
+
+```
+/commit --skip-review
+```
+
 ## Commit Best Practices
 - **Pre-commit verification**: Ensure code is linted, builds correctly, and documentation is updated
 - **Atomic commits**: Each commit should contain related changes that serve a single purpose
@@ -141,9 +147,10 @@ Commit splitting examples:
 1. Check staged files with `git status`
 2. If there are 0 staged files, automatically add all changed and new files with `git add`
 3. Run `git diff` to understand the changes being committed
-4. **Code Review**: Use code-reviewer agent to analyze the changes for code quality, security, performance, and best practices
+4. **Code Review**: Use code-reviewer agent to analyze the changes for code quality, security, performance, and best practices (unless `--skip-review` flag is used)
    - If **critical issues** are found (security vulnerabilities, major bugs, breaking changes), stop and ask user for confirmation before committing
    - If **minor issues** are found (style improvements, optimization suggestions), proceed with commit and provide improvement suggestions to user afterward
+   - When `--skip-review` flag is used, skip the code review step entirely and proceed directly to commit creation
 5. Analyze diff to determine if multiple distinct logical changes exist
 6. If multiple distinct changes are detected, suggest splitting the commit into multiple smaller commits
 7. For each commit (or single commit if not splitting), create commit message in conventional commit format with emoji
@@ -162,3 +169,4 @@ Commit splitting examples:
 ## Summary
 
 You will analyze the user's code changes, perform a code review, create an appropriate commit message with emojis in conventional commit format, and execute the git commit to save the changes to the repository.
+

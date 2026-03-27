@@ -2,7 +2,6 @@
 members = [
     "api",
     "api_test",
-    "api_schema",
     "repositories",
     "mailer"
 ]

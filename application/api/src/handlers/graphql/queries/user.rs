@@ -40,7 +40,7 @@ impl UserQuery {
 mod tests {
     use repositories::mock::user::UserRepositoryMock;
 
-    use crate::build_schema_with_context;
+    use crate::schema::build_schema_with_context;
 
     #[tokio::test]
     async fn test_fetch_user_query() {

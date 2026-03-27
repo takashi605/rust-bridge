@@ -5,10 +5,10 @@ build:
 # すでに起動していたコンテナは停止しない
 # api-test コンテナ内で workspace の全クレート（api_schema, api, api_test）をテストする
 test:
-	docker compose --profile test up --build api-test --abort-on-container-exit
+	docker compose run --rm api-test
 
 up:
 	docker compose up -d
 
 down:
-	docker compose down -v
+	docker compose down -v --remove-orphans

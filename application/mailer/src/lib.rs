@@ -11,7 +11,6 @@ use lettre::{
 
 #[async_trait]
 pub trait Mailer {
-    fn new(smtp_host: String, smtp_port: u16) -> Self;
     async fn send(&self, message: Message) -> anyhow::Result<String>;
 }
 
@@ -22,13 +21,6 @@ pub struct LettreMailer {
 
 #[async_trait]
 impl Mailer for LettreMailer {
-    fn new(smtp_host: String, smtp_port: u16) -> Self {
-        Self {
-            smtp_host,
-            smtp_port,
-        }
-    }
-
     async fn send(&self, message: Message) -> anyhow::Result<String> {
         // --- MultiPart ボディの生成 ---
         let body = self.generate_lettre_multipart(&message);
@@ -49,6 +41,13 @@ impl Mailer for LettreMailer {
 }
 
 impl LettreMailer {
+    pub fn new(smtp_host: String, smtp_port: u16) -> Self {
+        Self {
+            smtp_host,
+            smtp_port,
+        }
+    }
+
     /// MultiPart ボディを生成するプライベートメソッド
     /// text/plain と text/html の alternative を組み立てます
     fn generate_lettre_multipart(&self, message: &Message) -> MultiPart {
